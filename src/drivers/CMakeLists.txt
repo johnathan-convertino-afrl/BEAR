@@ -16,6 +16,6 @@ if(BUILD_GPIO_EXAMPLES OR BUILD_DRV_GPIO)
   add_subdirectory(gpio)
 endif()
 
-if(BUILD_SDCARD_EXAMPLES OR BUILD_DRV_SDCARD)
-  add_subdirectory(sdcard)
+if(BUILD_SPI_EXAMPLES OR BUILD_SDCARD_EXAMPLES OR BUILD_DRV_SPI OR BUILD_UTIL_FATFS OR BUILD_UTIL_SDCARD_SPI)
+  add_subdirectory(spi)
 endif()

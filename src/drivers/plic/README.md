@@ -1,10 +1,10 @@
-# ALSA Node
+# RISCV PLIC Driver
 
-ALSA DSP Node functions
+RISCV PLIC driver
 
 author: Jay Convertino  
 
-date: 2023.01.23  
+date: 2025.07.17  
 
 license: MIT
 
@@ -16,11 +16,8 @@ license: MIT
   - none
   
 ## Info
-  This set of callbacks will morph DSP Node into a ALSA read or write, depending on specified callbacks.
-  Selectable items are format, channels and rate.
+  Use initPlic to setup a struct at the device memory address. Use the struct to access the device registers.
 
-  See doxygen for function specific information.
-
-  * FORMAT :  Valid types: SND_PCM_FORMAT_S8, SND_PCM_FORMAT_U8, SND_PCM_FORMAT_S16_LE, SND_PCM_FORMAT_U16_LE, SND_PCM_FORMAT_FLOAT, SND_PCM_FORMAT_FLOAT64.
-  * CHANNELS : 1 for real/mono. 2 for complex/stereo.
-  * RATE : Any valid sampling rate for the ALSA device.
+  Based on the SiFive E31 core complex manual 21G1.01.00
+  
+  Per the above manual this core provides 127 external intterupts with 7 priority levels.

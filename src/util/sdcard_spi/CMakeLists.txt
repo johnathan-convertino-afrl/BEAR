@@ -1,15 +1,13 @@
 ################################################################################
-### date      2024.09.18
+### date      2025.07.17
 ### author    Jay Convertino
 ################################################################################
 
 cmake_minimum_required(VERSION 3.14)
 
-if(BUILD_SDCARD_EXAMPLES OR BUILD_UTIL_FATFS)
-  add_subdirectory(ff15)
-  add_subdirectory(sdcard_spi)
-endif()
+set(SDCARD_SPI_UTIL_SRCS
+  sdcard_spi.c
+  sdcard_spi.h
+)
 
-if(BUILD_UTIL_SDCARD_SPI)
-  add_subdirectory(sdcard_spi)
-endif()
+add_library(sdcard_spi_util ${SDCARD_SPI_UTIL_SRCS})

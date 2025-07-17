@@ -41,10 +41,11 @@ The Following options are off by default.
   * DRIVERS (will automagically build for applications above)
     - BUILD_DRV_UART : Xilinx UART Lite driver
     - BUILD_DRV_GPIO : Xilinx GPIO driver
-    - BUILD_DRV_SDCARD : SDCARD SPI driver
+    - BUILD_DRV_SPI  : Altera SPI driver
 
   * UTILITIES (will automagically build for applications above)
-    - BUILD_UTIL_FATFS : Open Source FATFS file system driver for embedded systems.
+    - BUILD_UTIL_FATFS      : Open Source FATFS file system driver for embedded systems.
+    - BUILD_UTIL_SDCARD_SPI : SDCARD read/write over SPI
 
 To turn on UART for example:
   - cmake ../ -DBUILD_UART_EXAMPLES=ON

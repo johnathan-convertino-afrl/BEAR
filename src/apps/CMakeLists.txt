@@ -72,7 +72,7 @@ endif()
 
 if(BUILD_SDCARD_EXAMPLES)
   add_executable(sdcard_dir_list.elf sdcard_dir_list.c)
-  target_link_libraries(sdcard_dir_list.elf PRIVATE plic_drv clint_drv uart_drv sdcard_drv fatfs_util)
+  target_link_libraries(sdcard_dir_list.elf PRIVATE plic_drv clint_drv uart_drv sdcard_util fatfs_util)
 
   gen_target_binary(sdcard_dir_list.elf)
 

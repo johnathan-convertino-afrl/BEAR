@@ -1,10 +1,10 @@
-# DSP Node library and examples
+# Example source code
 
-Source code folders for DSP Node
+Source code folders for FPGA baremetal examples
 
 author: Jay Convertino  
 
-date: 2023.07.15
+date: 2025.07.17
 
 license: MIT
 
@@ -18,6 +18,6 @@ license: MIT
 ## Info
   All folders contain README.md that adds details about the code in that specific location.
 
-  - apps : Contains example applications
-  - dsp_node : Contains all dsp_node source files, and morphes.
-  - kill_throbber : Contains library for killing threads and creating throbber.
+  - apps    : Contains example applications
+  - drivers : Contains drivers for devices on the system.
+  - util    : Contains librarys for items such as FAT16/32, SDCARD access, BITMAP reading, etc.

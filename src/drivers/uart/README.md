@@ -1,10 +1,10 @@
-# ALSA Node
+# Xilinx UART lite baremetal driver
 
-ALSA DSP Node functions
+Xilinx/bus_uart UART lite baremetal driver
 
 author: Jay Convertino  
 
-date: 2023.01.23  
+date: 2025.07.17  
 
 license: MIT
 
@@ -16,11 +16,4 @@ license: MIT
   - none
   
 ## Info
-  This set of callbacks will morph DSP Node into a ALSA read or write, depending on specified callbacks.
-  Selectable items are format, channels and rate.
-
-  See doxygen for function specific information.
-
-  * FORMAT :  Valid types: SND_PCM_FORMAT_S8, SND_PCM_FORMAT_U8, SND_PCM_FORMAT_S16_LE, SND_PCM_FORMAT_U16_LE, SND_PCM_FORMAT_FLOAT, SND_PCM_FORMAT_FLOAT64.
-  * CHANNELS : 1 for real/mono. 2 for complex/stereo.
-  * RATE : Any valid sampling rate for the ALSA device.
+  Use initUart to setup a struct at the device memory address. Use the struct to access the device registers.
