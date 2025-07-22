@@ -48,4 +48,4 @@ The Following options are off by default.
     - BUILD_UTIL_SDCARD_SPI : SDCARD read/write over SPI
 
 To turn on UART for example:
-  - cmake ../ -DBUILD_UART_EXAMPLES=ON
+  - cmake ../ -DBUILD_UART_EXAMPLES=ON -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/riscv.cmake

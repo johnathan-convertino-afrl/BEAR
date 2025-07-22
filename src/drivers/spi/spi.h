@@ -105,7 +105,7 @@ struct s_spi
       * @var s_spi:u_status:s_status_bits:rdy
       * Receive is ready
       */
-      volatile uint8_t rdy:1;
+      volatile uint8_t rrdy:1;
       /**
       * @var s_spi:u_status:s_status_bits:e
       * TOE or ROE is in an error state (active).
@@ -224,19 +224,84 @@ struct s_spi *initSpi(uint32_t memory_address);
 /*********************************************//**
   * @brief Read spi rx data
   *
-  * @param s_spi pre-initialized struct from initUart
+  * @param p_spi pre-initialized struct from initSpi
   *
   * @return 8 bit uint with data.
   *************************************************/
-uint8_t getSpiRxData(struct s_spi *s_spi);
+uint8_t getSpiData(struct s_spi *p_spi);
 
 /*********************************************//**
   * @brief Write spi tx data
   *
-  * @param s_spi pre-initialized struct from initSPI
+  * @param p_spi pre-initialized struct from initSPI
   * @param data 8 bit uint to write to spi device
   *************************************************/
-void setSpiTxData(struct s_spi *s_spi, uint8_t data);
+void setSpiData(struct s_spi *p_spi, uint8_t data);
+
+/*********************************************//**
+  * @brief Ready for read?
+  *
+  * @param p_spi pre-initialized struct from initSpi
+  *
+  * @return True, read is ready, false it is not (1 = true, 0 = false).
+  *************************************************/
+uint8_t getSpiReadReady(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief Ready for a write?
+  *
+  * @param p_spi pre-initialized struct from initSPI
+  *
+  * @return True, write is ready, false it is not (1 = true, 0 = false).
+  *************************************************/
+void getSpiWriteReady(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief set chip select
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  * @param num number of select device to set active during communication (0 is the first device select).
+  *************************************************/
+void setSpiChipSelect(struct s_spi *p_spi, uint8_t num);
+
+/*********************************************//**
+  * @brief manually clear chip select
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  * @param num number of select device to set inactive during communication (0 is first device select).
+  *************************************************/
+void clrSpiChipSelect(struct s_spi *p_spi, uint8_t num);
+
+/*********************************************//**
+  * @brief manually set all chip select to active (low)
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void setSpiForceSelect(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief manually clear set all chip select to active (low)
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void clrSpiForceSelect(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief set clock frequency, does nothing at the moment.
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  * @param freq frequency in hertz
+  *************************************************/
+void setSpiClockFreq(struct s_spi *p_spi, uint32_t freq);
+
+/*********************************************//**
+  * @brief set mode for CPHA/CPOL, does nothing at the moment.
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  * @param cpha cpha value of 0 or 1, anything else will result in a value of 0.
+  * @param cpol cpol value of 0 or 1, anything else will result in a value of 0.
+  *************************************************/
+void setSpiMode(struct s_spi *p_spi, uint8_t cpha, uint8_t cpol);
 
 #ifdef __cplusplus
 }
