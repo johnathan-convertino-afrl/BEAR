@@ -11,7 +11,7 @@ ENTRY(_enter)
 
 MEMORY
 {
-    ram (arw!xi) : ORIGIN = 0x80000000, LENGTH = 8k
+    ram (arw!xi) : ORIGIN = 0x80000000, LENGTH = 32k
 }
 
 PHDRS

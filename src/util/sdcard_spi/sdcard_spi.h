@@ -1,8 +1,8 @@
 /***************************************************************************//**
-  * @file     spi.h
-  * @brief    Altera AXI SPI driver
-  * @details  Baremetal C driver targeting Altera based SPI lite cores.
-  *           Written with riscv or arm irq structure in mind.
+  * @file     sdcard_spi.h
+  * @brief    SDCARD R/W over SPI
+  * @details  Baremetal SDCARD read/write over SPI. This uses polling for all reads
+  *           and writes.
   * @author   Johnathan Convertino (johnathan.convertino.1@us.af.mil)
   * @date     07/17/2025
   * @version
@@ -40,15 +40,40 @@ extern "C" {
 
 #include <stdint.h>
 
-SD_NCR_TIMEOUT/**
+/**
  * @struct s_sdcard_spi
  * @brief A struct to store current state of the sdcard spi software protocol
  */
 struct s_sdcard_spi
 {
   uint8_t cs_num;
+  uint8_t last_r1;
+  uint8_t last_error_token;
+  uint8_t v1;
+  uint8_t hc;
+
+  enum
+  {
+    READY_HIGH_CAPACITY_V2,
+    READY_STANDARD_CAPACITY_V2,
+    READY_STANDARD_CAPACITY_V1,
+    INIT_V1,
+    INIT_V2,
+    CMD0_FAIL,
+    CMD8_FAIL,
+    VOLTAGE_SET_FAIL,
+    VOLTAGE_RANGE_FAIL,
+    CHECK_PATTERN_FAIL,
+    CMD16_FAIL,
+    CMD58_FAIL,
+    ACMD41_FAIL,
+    READ_FAIL,
+    WRITE_FAIL,
+    UNKNOWN_FAIL,
+    NOT_READY
+  } state;
+  
   struct s_spi *p_spi;
-  enum {READY, INIT_V1, INIT_V2, CMD0_FAIL, CMD8_FAIL, VOLTAGE_RANGE_FAIL, CHECK_PATTERN_FAIL, CMD58_FAIL, UNKNOWN_FAIL, NOT_READY} state; 
 };
 
 /*********************************************//**
@@ -56,13 +81,45 @@ struct s_sdcard_spi
   * to defaults, this will put it in a state ready for
   * data transfer.
   *
+  * @param p_sdcard_spi is a pre-allocated struct that for
+  * the sdcard driver.
   * @param memory_address is the starting memory_address
   * of the spi device on the system bus.
   * @param cs_num is the number of the sdcard chip select.
-  *
-  * @return s_sdcard_spi is a struct allocated with some memory.
+  * 
+  * @return 0 on no error, 1 for an error.
   *************************************************/
-struct s_sdcard_spi *initSdcardSpi(uint32_t memory_address, uint8_t cs_num);
+uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address, uint8_t cs_num);
+
+/*********************************************//**
+  * @brief Read the sdcard over spi in 512 byte blocks for all standards.
+  *
+  * @param p_sdcard_spi is struct containing device information from init.
+  * @param address start address to read a block, even for v1 (byte size is set to 512).
+  * @param p_buffer array of uint8_t (bytes) for the 512 bytes read from the block.
+  * 
+  * @return 0 on no error, 1 for an error.
+  *************************************************/
+uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer);
+
+/*********************************************//**
+  * @brief Write the sdcard over spi in 512 byte blocks for all standards.
+  *
+  * @param p_sdcard_spi is struct containing device information from init.
+  * @param address start address to write a block, even for v1 (byte size is set to 512).
+  * @param p_buffer array of uint8_t (bytes) for the 512 bytes to write to the block.
+  * 
+  * @return 0 on no error, 1 for an error
+  *************************************************/
+uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer);
+
+/*********************************************//**
+  * @brief Return a string based on the state of the device
+  *
+  * @param p_sdcard_spi is struct containing device information from init.
+  * @return a string message
+  *************************************************/
+char *getSdcardSpiStateString(struct s_sdcard_spi *p_sdcard_spi);
 
 #ifdef __cplusplus
 }

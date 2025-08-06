@@ -71,7 +71,7 @@ struct s_gpio
   * @union u_gier
   * @brief Register gier with packed struct to access individual bits
   */
-  union u_gier
+  union
   {
     /**
     * @var s_gpio:u_gier:reg
@@ -83,7 +83,7 @@ struct s_gpio
     * @union s_gier_bits
     * @brief packed struct with bits.
     */
-    struct s_gier_bits
+    struct
     {
       /**
       * @var s_gpio:u_gier:s_gier_bits:reserver
@@ -102,7 +102,7 @@ struct s_gpio
   * @union u_ier
   * @brief Register ier with packed struct to access individual bits
   */
-  union u_ier
+  union
   {
     /**
     * @var s_gpio:u_ier:reg
@@ -114,7 +114,7 @@ struct s_gpio
     * @union s_ier_bits
     * @brief packed struct with bits.
     */
-    struct s_ier_bits
+    struct
     {
       /**
       * @var s_gpio:u_ier:s_ier_bits:ch1_ena
@@ -140,7 +140,7 @@ struct s_gpio
   * @union u_isr
   * @brief Register isr with packed struct to access individual bits
   */
-  union u_isr
+  union
   {
     /**
     * @var s_gpio:u_isr:reg
@@ -152,7 +152,7 @@ struct s_gpio
     * @union s_isr_bits
     * @brief packed struct with bits.
     */
-    struct s_isr_bits
+    struct
     {
       /**
       * @var s_gpio:u_isr:s_isr_bits:ch1_sta

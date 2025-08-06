@@ -694,7 +694,7 @@ struct s_plic
   * @union u_pending1
   * @brief Register pending1 with packed struct to access individual bits
   */
-  union u_pending1
+  union
   {
     /**
     * @var s_plic:u_pending1:reg
@@ -706,7 +706,7 @@ struct s_plic
     * @union s_pending1_bits
     * @brief packed struct with bits.
     */
-    struct s_pending1_bits
+    struct
     {
       /**
       * @var s_plic:u_pending1:s_pending_bits:i0
@@ -874,7 +874,7 @@ struct s_plic
   * @union u_pending2
   * @brief Register pending2 with packed struct to access individual bits
   */
-  union u_pending2
+  union
   {
     /**
     * @var s_plic:u_pending2:reg
@@ -886,7 +886,7 @@ struct s_plic
     * @union s_pending2_bits
     * @brief packed struct with bits.
     */
-    struct s_pending2_bits
+    struct
     {
       /**
       * @var s_plic:u_pending2:s_pending_bits:i32
@@ -1054,7 +1054,7 @@ struct s_plic
   * @union u_pending3
   * @brief Register pending3 with packed struct to access individual bits
   */
-  union u_pending3
+  union
   {
     /**
     * @var s_plic:u_pending3:reg
@@ -1066,7 +1066,7 @@ struct s_plic
     * @union s_pending3_bits
     * @brief packed struct with bits.
     */
-    struct s_pending3_bits
+    struct
     {
       /**
       * @var s_plic:u_pending3:s_pending_bits:i64
@@ -1234,7 +1234,7 @@ struct s_plic
   * @union u_pending4
   * @brief Register pending4 with packed struct to access individual bits
   */
-  union u_pending4
+  union
   {
     /**
     * @var s_plic:u_pending4:reg
@@ -1246,7 +1246,7 @@ struct s_plic
     * @union s_pending4_bits
     * @brief packed struct with bits.
     */
-    struct s_pending4_bits
+    struct
     {
       /**
       * @var s_plic:u_pending4:s_pending_bits:i96
@@ -1419,7 +1419,7 @@ struct s_plic
   * @union u_enable1
   * @brief Register enable1 with packed struct to access individual bits
   */
-  union u_enable1
+  union
   {
     /**
     * @var s_plic:u_enable1:reg
@@ -1431,7 +1431,7 @@ struct s_plic
     * @union s_enable1_bits
     * @brief packed struct with bits.
     */
-    struct s_enable1_bits
+    struct
     {
       /**
       * @var s_plic:u_enable1:s_enable_bits:i0
@@ -1599,7 +1599,7 @@ struct s_plic
   * @union u_enable2
   * @brief Register enable2 with packed struct to access individual bits
   */
-  union u_enable2
+  union
   {
     /**
     * @var s_plic:u_enable2:reg
@@ -1611,7 +1611,7 @@ struct s_plic
     * @union s_enable2_bits
     * @brief packed struct with bits.
     */
-    struct s_enable2_bits
+    struct
     {
       /**
       * @var s_plic:u_enable2:s_enable_bits:i32
@@ -1779,7 +1779,7 @@ struct s_plic
   * @union u_enable3
   * @brief Register enable3 with packed struct to access individual bits
   */
-  union u_enable3
+  union
   {
     /**
     * @var s_plic:u_enable3:reg
@@ -1791,7 +1791,7 @@ struct s_plic
     * @union s_enable3_bits
     * @brief packed struct with bits.
     */
-    struct s_enable3_bits
+    struct
     {
       /**
       * @var s_plic:u_enable3:s_enable_bits:i64
@@ -1959,7 +1959,7 @@ struct s_plic
   * @union u_enable4
   * @brief Register enable4 with packed struct to access individual bits
   */
-  union u_enable4
+  union
   {
     /**
     * @var s_plic:u_enable4:reg
@@ -1971,7 +1971,7 @@ struct s_plic
     * @union s_enable4_bits
     * @brief packed struct with bits.
     */
-    struct s_enable4_bits
+    struct
     {
       /**
       * @var s_plic:u_enable4:s_enable_bits:i96

@@ -14,8 +14,10 @@ link_libraries(bare_metal_boot irq)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR} -std=c99 -Os -g -Wall -Wextra -ffunction-sections ")
 
-include_directories(${CMAKE_SOURCE_DIR}/src/drivers/)
-
+include_directories(
+  ${CMAKE_SOURCE_DIR}/src/drivers/
+  ${CMAKE_SOURCE_DIR}/src/util/
+)
 function(gen_target_binary TARGET_NAME)
   get_filename_component(TARGET_NAME_WE ${TARGET_NAME} NAME_WE)
 
@@ -71,10 +73,18 @@ if(BUILD_PMP_EXAMPLES)
 endif()
 
 if(BUILD_SDCARD_EXAMPLES)
-  add_executable(sdcard_dir_list.elf sdcard_dir_list.c)
-  target_link_libraries(sdcard_dir_list.elf PRIVATE plic_drv clint_drv uart_drv sdcard_util fatfs_util)
+  add_executable(sdcard_raw_read.elf sdcard_raw_read.c)
+  target_link_libraries(sdcard_raw_read.elf PRIVATE uart_drv sdcard_spi_util spi_drv)
 
-  gen_target_binary(sdcard_dir_list.elf)
+  gen_target_binary(sdcard_raw_read.elf)
+
+endif()
+
+if(BUILD_SPI_EXAMPLES)
+  add_executable(spi_echo.elf spi_echo.c)
+  target_link_libraries(spi_echo.elf PRIVATE uart_drv spi_drv)
+
+  gen_target_binary(spi_echo.elf)
 
 endif()
 

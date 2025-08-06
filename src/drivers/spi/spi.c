@@ -40,7 +40,6 @@ struct s_spi *initSpi(uint32_t memory_address)
 {
   struct s_spi *p_temp = (struct s_spi *)memory_address;
 
-  p_temp->tx_data     = 0;
   p_temp->status.reg  = 0;
 
   return p_temp;
@@ -66,21 +65,35 @@ uint8_t getSpiReadReady(struct s_spi *p_spi)
 }
 
 // Ready for a write?
-void getSpiWriteReady(struct s_spi *p_spi)
+uint8_t getSpiWriteReady(struct s_spi *p_spi)
 {
   return p_spi->status.bits.trdy;
+}
+
+// Not active when 1 (aka not transmitting).
+uint8_t getSpiTransmitNotActive(struct s_spi *p_spi)
+{
+  return p_spi->status.bits.tmt;
 }
 
 // set chip select
 void setSpiChipSelect(struct s_spi *p_spi, uint8_t num)
 {
-  p_spi->slave_select |= ((uint32_t)1 << num);
+  uint32_t temp = p_spi->slave_select;
+  
+  temp |= ((uint32_t)1 << num);
+  
+  p_spi->slave_select = temp;
 }
 
 // clear chip select
 void clrSpiChipSelect(struct s_spi *p_spi, uint8_t num)
 {
-  p_spi->slave_select &= ~((uint32_t)1 << num);
+  uint32_t temp = p_spi->slave_select;
+  
+  temp &= ~((uint32_t)1 << num);
+  
+  p_spi->slave_select = temp;
 }
 
 // manually set all chip select to active (low)
@@ -98,17 +111,36 @@ void clrSpiForceSelect(struct s_spi *p_spi)
 // set clock frequency, does nothing at the moment.
 void setSpiClockFreq(struct s_spi *p_spi, uint32_t freq)
 {
-  return;
+  p_spi->speed_control_ext = freq;
+}
+
+// reset tx fifo
+void setSpiResetTXfifo(struct s_spi *p_spi)
+{
+  p_spi->control_ext.bits.rst_tx = 1;
+}
+
+// reset rx fifo
+void setSpiResetRXfifo(struct s_spi *p_spi)
+{
+  p_spi->control_ext.bits.rst_rx = 1;
+}
+
+//  block rx fifo
+void setSpiBlockRXfifo(struct s_spi *p_spi)
+{
+  p_spi->control_ext.bits.blk_rx = 1;
+}
+
+// unblock rx fifo
+void unsetSpiBlockRXfifo(struct s_spi *p_spi)
+{
+  p_spi->control_ext.bits.blk_rx = 0;
 }
 
 // set mode for CPHA/CPOL, does nothing at the moment.
 void setSpiMode(struct s_spi *p_spi, uint8_t cpha, uint8_t cpol)
 {
-  uint8_t ck_cpha;
-  uint8_t ck_cpol;
-  
-  ck_cpha = (cpha == 1 ? cpha : 0);
-  ck_cpol = (cpol == 1 ? cpol : 0);
-  
-  return;
+  p_spi->control_ext.bits.cpha = (cpha == 1 ? cpha : 0);
+  p_spi->control_ext.bits.cpol = (cpol == 1 ? cpol : 0);
 }

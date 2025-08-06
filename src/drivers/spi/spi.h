@@ -39,11 +39,12 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-
+  
+  
 /**
- * @struct s_spi
- * @brief A struct to use for various spi devices. Will get memory mapped by init.
- */
+* @struct s_spi
+* @brief A struct to use for Altera spi devices. Will get memory mapped by init.
+*/
 struct s_spi
 {
   /**
@@ -62,7 +63,7 @@ struct s_spi
   * @union u_status
   * @brief Register status with packed struct to access individual bits
   */
-  union u_status
+  union
   {
     /**
     * @var s_spi:u_status:reg
@@ -74,7 +75,7 @@ struct s_spi
     * @union s_status_bits
     * @brief packed struct with bits.
     */
-    struct s_status_bits
+    struct
     {
       /**
       * @var s_spi:u_status:s_status_bits:unused0
@@ -128,7 +129,7 @@ struct s_spi
   * @union u_control
   * @brief Register control with packed struct to access individual bits
   */
-  union u_control
+  union
   {
     /**
     * @var s_spi:u_control:reg
@@ -140,7 +141,7 @@ struct s_spi
     * @union s_control_bits
     * @brief packed struct with bits.
     */
-    struct s_control_bits
+    struct
     {
       /**
       * @var s_spi:u_control:s_control_bits:unused0
@@ -157,6 +158,11 @@ struct s_spi
       * Set to generate interrupt on TOE going active.
       */
       volatile uint8_t itoe:1;
+      /**
+      * @var s_spi:u_control:s_control_bits:unused1
+      * Unused bits
+      */
+      volatile uint8_t unused1:1;
       /**
       * @var s_spi:u_control:s_control_bits:itrdy
       * Set to generate interrupt on TRDY going active.
@@ -186,7 +192,7 @@ struct s_spi
       * @var s_spi:u_control:s_control_bits:unused1
       * Unused bits
       */
-      volatile uint32_t unused1:21;
+      volatile uint32_t unused2:21;
     } bits;
   } control;
   
@@ -207,6 +213,104 @@ struct s_spi
   * Set to value for comparison to tx or rx data to signal end of packet
   */
   volatile uint32_t eop_value;
+  
+  /**
+  * @union u_status_ext
+  * @brief Register status extended with packed struct to access individual bits
+  */
+  union
+  {
+    /**
+    * @var s_spi:u_status_ext:reg
+    * Status register ext
+    */
+    volatile uint32_t reg;
+
+    /**
+    * @union s_status_bits
+    * @brief packed struct with bits.
+    */
+    struct
+    {
+      /**
+      * @var s_spi:u_status_ext:s_status_bits:fifo_ena
+      * When 1 fifo is enabled
+      */
+      volatile uint8_t fifo_ena:1;
+      /**
+      * @var s_spi:u_status_ext:s_status_bits:rst_rx_act
+      * RX fifo reset is active when 1
+      */
+      volatile uint8_t rst_rx_act:1;
+      /**
+      * @var s_spi:u_status_ext:s_status_bits:rst_tx_act
+      * TX fifo reset is active when 1
+      */
+      volatile uint8_t rst_tx_act:1;
+      /**
+      * @var s_spi:u_status_ext:s_status_bits:unused0
+      * Unused bits
+      */
+      volatile uint32_t unused0:29;
+    } bits;
+  } status_ext;
+  
+  /**
+  * @union u_control_ext
+  * @brief Register control extension with packed struct to access individual bits
+  */
+  union
+  {
+    /**
+    * @var s_spi:u_control_ext:reg
+    * Global interupt register
+    */
+    volatile uint32_t reg;
+
+    /**
+    * @union s_control_bits
+    * @brief packed struct with bits.
+    */
+    struct
+    {
+      /**
+      * @var s_spi:u_control:s_control_bits:cpha
+      * Set to change CPOL
+      */
+      volatile uint8_t cpol:1;
+      /**
+      * @var s_spi:u_control:s_control_bits:cpha
+      * Set to change CPHA
+      */
+      volatile uint8_t cpha:1;
+      /**
+      * @var s_spi:u_control:s_control_bits:rst_tx
+      * reset tx fifo
+      */
+      volatile uint8_t rst_tx:1;
+      /**
+      * @var s_spi:u_control:s_control_bits:rst_rx
+      * reset rx fifo
+      */
+      volatile uint8_t rst_rx:1;
+      /**
+      * @var s_spi:u_control:s_control_bits:blk_rx
+      * block rx output
+      */
+      volatile uint8_t blk_rx:1;
+      /**
+      * @var s_spi:u_control:s_control_bits:unused1
+      * Unused bits
+      */
+      volatile uint32_t unused1:27;
+    } bits;
+  } control_ext;
+  
+  /**
+  * @var s_spi::speed_control_ext
+  * Set to a speed in hz for the SPI clock output.
+  */
+  volatile uint32_t speed_control_ext;
 };
 
 /*********************************************//**
@@ -254,7 +358,16 @@ uint8_t getSpiReadReady(struct s_spi *p_spi);
   *
   * @return True, write is ready, false it is not (1 = true, 0 = false).
   *************************************************/
-void getSpiWriteReady(struct s_spi *p_spi);
+uint8_t getSpiWriteReady(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief Not active to transmit when 1 (no more data to transmit).
+  *
+  * @param p_spi pre-initialized struct from initSPI
+  *
+  * @return False, transmit is running, True it is not (1 = true, 0 = false).
+  *************************************************/
+uint8_t getSpiTransmitNotActive(struct s_spi *p_spi);
 
 /*********************************************//**
   * @brief set chip select
@@ -293,6 +406,34 @@ void clrSpiForceSelect(struct s_spi *p_spi);
   * @param freq frequency in hertz
   *************************************************/
 void setSpiClockFreq(struct s_spi *p_spi, uint32_t freq);
+
+/*********************************************//**
+  * @brief reset tx fifo
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void setSpiResetTXfifo(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief reset rx fifo
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void setSpiResetRXfifo(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief block rx fifo
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void setSpiBlockRXfifo(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief unblock rx fifo
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void unsetSpiBlockRXfifo(struct s_spi *p_spi);
 
 /*********************************************//**
   * @brief set mode for CPHA/CPOL, does nothing at the moment.

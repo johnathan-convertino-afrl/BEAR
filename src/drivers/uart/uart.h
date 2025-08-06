@@ -61,7 +61,7 @@ struct s_uart
   * @union u_status
   * @brief Register status with packed struct to access individual bits
   */
-  union u_status
+  union
   {
     /**
     * @var s_uart:u_status:reg
@@ -73,7 +73,7 @@ struct s_uart
     * @union s_status_bits
     * @brief packed struct with bits.
     */
-    struct s_status_bits
+    struct
     {
       /**
       * @var s_uart:u_status:s_status_bits:rx_fifo_valid
@@ -127,7 +127,7 @@ struct s_uart
   * @union u_control
   * @brief Register control with packed struct to access individual bits
   */
-  union u_control
+  union
   {
     /**
     * @var s_uart:u_control:reg
