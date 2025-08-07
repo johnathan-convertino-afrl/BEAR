@@ -30,9 +30,6 @@ int main()
   for(;;)
   {
     int index_char;
-    int index_col = 0;
-    
-    delay(1000000);
     
     error = readSdcardSpi(&sdcard_spi, index, buf);
     
@@ -52,16 +49,14 @@ int main()
     {
       if(index_char == 0) sendUartString(p_uart, "\r");
       
-      index_col++;
-      
-      setUartTxData(p_uart, buf[index_char]);
-
-      if(index_col == 80)
+      if(index_char%80 == 0)
       {
         sendUartString(p_uart, "\r");
-        index_col = 0;
       }
+      
+      while(p_uart->status.bits.tx_fifo_full);
+      
+      setUartTxData(p_uart, buf[index_char]);
     }
-    sendUartString(p_uart, "\r");
   }
 }

@@ -38,12 +38,14 @@
 #include "sdcard_spi.h"
 
 // MAGIC
-#define SD_FAST_FREQ_HZ         5000000
+#define SD_FAST_FREQ_HZ         1000000
 #define SD_SLOW_FREQ_HZ         100000
 #define SD_INIT_WORD            0xFF
-#define SD_NCR_ATTEMPT          16
-#define SD_INIT_ATTEMPT         10
-#define SD_MAX_INIT_CARD_TRIES  100
+#define SD_NCR_ATTEMPT          32
+#define SD_BASE_ATTEMPT         5000
+#define SD_TOKEN_ATTEMPT        (SD_BASE_ATTEMPT * SD_SLOW_FREQ_HZ)/SD_FAST_FREQ_HZ 
+#define SD_INIT_ATTEMPT         (SD_BASE_ATTEMPT * SD_SLOW_FREQ_HZ)/SD_FAST_FREQ_HZ
+#define SD_MAX_INIT_CARD_TRIES  (SD_BASE_ATTEMPT * SD_SLOW_FREQ_HZ)/SD_FAST_FREQ_HZ
 #define SD_START_TOKEN          0xFE
 #define SD_DATA_ACCEPTED_TOKEN  0x05
 #define SD_DATA_REJ_CRC_TOKEN   0x0B
@@ -139,7 +141,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
 {
   int index;
   
-  uint8_t init_attempts = 0;
+  int init_attempts = 0;
   
   // store SD responses from first byte to last (first 0 last 4).
   uint8_t sd_response[5] = {0};
@@ -393,7 +395,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
     return SD_ERROR_RETURN;
   }
   
-  response = recvRespOneByte(p_sdcard_spi->p_spi, 10000);
+  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_TOKEN_ATTEMPT);
   
   p_sdcard_spi->last_error_token = response;
   
@@ -406,7 +408,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
     return SD_ERROR_RETURN;
   }
         
-  for(index = SD_FIXED_BYTES-1; index >= 0; index--)
+  for(index = 0; index < SD_FIXED_BYTES; index++)
   {
     p_buffer[index] = recvRawData(p_sdcard_spi->p_spi);
   }
@@ -460,7 +462,7 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
     sendRawData(p_sdcard_spi->p_spi, p_buffer[index]);
   }
   
-  response = recvRespOneByte(p_sdcard_spi->p_spi, 10000);
+  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_TOKEN_ATTEMPT);
   
   p_sdcard_spi->last_error_token = response;
   
