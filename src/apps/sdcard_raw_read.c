@@ -13,7 +13,9 @@ int main()
   int index = 0;
   int error = 0;
   
-  uint8_t buf[512] = {0};
+  uint8_t r_buf[512] = {0};
+  
+  uint8_t w_buf[512] = {0};
   
   struct s_sdcard_spi sdcard_spi;
   
@@ -26,23 +28,25 @@ int main()
   sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
   
   delay(2000);
+  
+  for(index = 0; index < 512; index++)
+  {
+    w_buf[index] = '6';
+  }
 
   for(;;)
   {
     int index_char;
     
-    error = readSdcardSpi(&sdcard_spi, index, buf);
+    error = readSdcardSpi(&sdcard_spi, 0, r_buf);
     
     if(error != 0)
     {
       sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
       
-      for(index_char = 0; index_char < 512; index_char++)
-        buf[index_char] = (uint8_t)'\r';
+      sendUartString(p_uart, "READ ERROR");
       
-      buf[509] = 'E';
-      buf[510] = '\n';
-      buf[511] = '\r';
+      continue;
     }
 
     for(index_char = 0; index_char < 512; index_char++)
@@ -56,7 +60,16 @@ int main()
       
       while(p_uart->status.bits.tx_fifo_full);
       
-      setUartTxData(p_uart, buf[index_char]);
+      setUartTxData(p_uart, r_buf[index_char]);
+    }
+    
+    error =  writeSdcardSpi(&sdcard_spi, 1, w_buf);
+  
+    if(error != 0)
+    {
+      sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
+      
+      sendUartString(p_uart, "WRITE ERROR");
     }
   }
 }

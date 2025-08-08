@@ -50,6 +50,7 @@
 #define SD_DATA_ACCEPTED_TOKEN  0x05
 #define SD_DATA_REJ_CRC_TOKEN   0x0B
 #define SD_DATA_REJ_WRITE_TOKEN 0x0D
+#define SD_DATA_ACCEPTED_MASK   0x0F
 #define SD_ERROR_RETURN         1
 #define SD_NOERROR_RETURN       0
 
@@ -157,23 +158,23 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   
   setSpiClockFreq(p_spi, SD_SLOW_FREQ_HZ);
   
-  //disable chip select for 80 clock cycle write
-  clrSpiChipSelect(p_spi, cs_num);
-  
-  // write all ones for 80 clock cycles to the SDCARD while it is NOT selected.
-  for(index = 0; index < 10; index++)
-  {
-    setSpiData(p_spi, SD_INIT_WORD);
-  }
-
-  //set struct members
-  p_sdcard_spi->state = NOT_READY;
-  p_sdcard_spi->p_spi = p_spi;
-  p_sdcard_spi->cs_num = cs_num;
-  
   //Try to send command 0 10 times and receive idle response.
   do
   {    
+    //disable chip select for 80 clock cycle write
+    clrSpiChipSelect(p_spi, cs_num);
+  
+    // write all ones for 80 clock cycles to the SDCARD while it is NOT selected.
+    for(index = 0; index < 10; index++)
+    {
+      setSpiData(p_spi, SD_INIT_WORD);
+    }
+
+    //set struct members
+    p_sdcard_spi->state = NOT_READY;
+    p_sdcard_spi->p_spi = p_spi;
+    p_sdcard_spi->cs_num = cs_num;
+    
     waitForTrans(p_spi, 1000);
     
     setSpiResetRXfifo(p_spi);
@@ -429,15 +430,15 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   
   uint8_t response;
   
-  switch(p_sdcard_spi->state)
-  {
-    case READY_HIGH_CAPACITY_V2:
-    case READY_STANDARD_CAPACITY_V2:
-    case READY_STANDARD_CAPACITY_V1:
-      break;
-    default:
-      return SD_ERROR_RETURN;
-  }
+  // switch(p_sdcard_spi->state)
+  // {
+  //   case READY_HIGH_CAPACITY_V2:
+  //   case READY_STANDARD_CAPACITY_V2:
+  //   case READY_STANDARD_CAPACITY_V1:
+  //     break;
+  //   default:
+  //     return SD_ERROR_RETURN;
+  // }
   
   address = (p_sdcard_spi->v1 ? address * SD_FIXED_BYTES : address);
   
@@ -451,13 +452,16 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   
   if(response) 
   {
+    clrSpiForceSelect(p_sdcard_spi->p_spi);
+    
     p_sdcard_spi->state = WRITE_FAIL;
+    
     return SD_ERROR_RETURN;
   }
   
   sendRawData(p_sdcard_spi->p_spi, SD_START_TOKEN);
   
-  for(index = SD_FIXED_BYTES-1; index >= 0; index--)
+  for(index = 0; index < SD_FIXED_BYTES; index++)
   {
     sendRawData(p_sdcard_spi->p_spi, p_buffer[index]);
   }
@@ -466,9 +470,12 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   
   p_sdcard_spi->last_error_token = response;
   
-  if(response != SD_DATA_ACCEPTED_TOKEN)
+  if((response & SD_DATA_ACCEPTED_MASK) != SD_DATA_ACCEPTED_TOKEN)
   {
+    clrSpiForceSelect(p_sdcard_spi->p_spi);
+    
     p_sdcard_spi->state = WRITE_FAIL;
+    
     return SD_ERROR_RETURN;
   }
   
@@ -478,7 +485,7 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   {
     response = recvRawData(p_sdcard_spi->p_spi);
   }
-  while(response == 0x00);
+  while(!response);
   
   clrSpiForceSelect(p_sdcard_spi->p_spi);
   
@@ -517,6 +524,8 @@ static inline void sendCommand(struct s_spi *p_spi, uint8_t cmd, uint32_t arg, u
   sendRawData(p_spi, (uint8_t)(arg));
   
   sendRawData(p_spi, crc | SD_TERM_CRC);
+  
+  if(!getSpiFifoEnabled(p_spi)) return;
   
   for(index = 0; index < 5; index++)
   {

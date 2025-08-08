@@ -370,6 +370,33 @@ uint8_t getSpiWriteReady(struct s_spi *p_spi);
 uint8_t getSpiTransmitNotActive(struct s_spi *p_spi);
 
 /*********************************************//**
+  * @brief Internal fifo enabled if 1
+  *
+  * @param p_spi pre-initialized struct from initSPI
+  *
+  * @return True if fifo enabled, false if not (1 = true, 0 = false)
+  *************************************************/
+uint8_t getSpiFifoEnabled(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief Receive Fifo is being reset
+  *
+  * @param p_spi pre-initialized struct from initSPI
+  *
+  * @return True if in reset, false if not (1 = true, 0 = false).
+  *************************************************/
+uint8_t getSpiReceiveFifoResetEnabled(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief Transmit Fifo is being reset
+  *
+  * @param p_spi pre-initialized struct from initSPI
+  *
+  * @return True if in reset, false if not (1 = true, 0 = false).
+  *************************************************/
+uint8_t getSpiTransmitFifoResetEnabled(struct s_spi *p_spi);
+
+/*********************************************//**
   * @brief set chip select
   * 
   * @param p_spi pre initialized struct from initSpi

@@ -76,6 +76,24 @@ uint8_t getSpiTransmitNotActive(struct s_spi *p_spi)
   return p_spi->status.bits.tmt;
 }
 
+// fifo enabled?
+uint8_t getSpiFifoEnabled(struct s_spi *p_spi)
+{
+  return p_spi->status_ext.bits.fifo_ena;
+}
+
+// RX reset active
+uint8_t getSpiReceiveFifoResetEnabled(struct s_spi *p_spi)
+{
+  return p_spi->status_ext.bits.rst_rx_act;
+}
+
+// TX reset active
+uint8_t getSpiTransmitFifoResetEnabled(struct s_spi *p_spi)
+{
+  return p_spi->status_ext.bits.rst_tx_act;
+}
+
 // set chip select
 void setSpiChipSelect(struct s_spi *p_spi, uint8_t num)
 {
