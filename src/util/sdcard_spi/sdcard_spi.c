@@ -158,6 +158,11 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   
   setSpiClockFreq(p_spi, SD_SLOW_FREQ_HZ);
   
+  //set struct members
+  p_sdcard_spi->state = NOT_READY;
+  p_sdcard_spi->p_spi = p_spi;
+  p_sdcard_spi->cs_num = cs_num;
+  
   //Try to send command 0 10 times and receive idle response.
   do
   {    
@@ -167,17 +172,12 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     // write all ones for 80 clock cycles to the SDCARD while it is NOT selected.
     for(index = 0; index < 10; index++)
     {
-      setSpiData(p_spi, SD_INIT_WORD);
+      sendRawData(p_spi, SD_INIT_WORD);
     }
-
-    //set struct members
-    p_sdcard_spi->state = NOT_READY;
-    p_sdcard_spi->p_spi = p_spi;
-    p_sdcard_spi->cs_num = cs_num;
     
     waitForTrans(p_spi, 1000);
     
-    setSpiResetRXfifo(p_spi);
+    if(getSpiFifoEnabled(p_spi)) setSpiResetRXfifo(p_spi);
     
     //enable chip select
     setSpiChipSelect(p_spi, cs_num);
@@ -191,6 +191,8 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     clrSpiForceSelect(p_spi);
     
     init_attempts++;
+    
+    waitForTrans(p_spi, 1000);
   }
   while((sd_response[0] != SD_RESP_IDLE_BIT_MASK_R1) && (init_attempts < SD_INIT_ATTEMPT));
 
@@ -198,12 +200,12 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
         
   if((sd_response[0] != SD_RESP_IDLE_BIT_MASK_R1) && (init_attempts >= SD_INIT_ATTEMPT))
   {
+    clrSpiChipSelect(p_spi, cs_num);
+    
     p_sdcard_spi->state = CMD0_FAIL;
     
     return SD_ERROR_RETURN;
   }
-  
-  waitForTrans(p_spi, 100);
   
   //send command 8 and check response
   setSpiForceSelect(p_spi);

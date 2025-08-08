@@ -31,13 +31,13 @@ int main()
   
   for(index = 0; index < 512; index++)
   {
-    w_buf[index] = '6';
+    w_buf[index] = 'A';
   }
 
   for(;;)
   {
     int index_char;
-    
+
     error = readSdcardSpi(&sdcard_spi, 0, r_buf);
     
     if(error != 0)
@@ -48,7 +48,7 @@ int main()
       
       continue;
     }
-
+    
     for(index_char = 0; index_char < 512; index_char++)
     {
       if(index_char == 0) sendUartString(p_uart, "\r");
