@@ -16,56 +16,71 @@ int main()
   
   struct s_uart *p_uart = initUart(UART_ADDR);
   
+  sendUartString(p_uart, "MOUNT DRIVE\n");
+  
   error = pf_mount(&file_sys);
   
   if(error)
   {
     sendUartString(p_uart, "MOUNT FAILED\n");
+    
+    return 0;
   }
+  
+  sendUartString(p_uart, "OPEN TEXT\n");
   
   error = pf_open("input.txt");
   
   if(error)
   {
     sendUartString(p_uart, "FILE OPEN FAILED\n");
+    return 0;
   }
 
   for(;;)
   {
-    int index_char;
+    unsigned int index_char;
     unsigned int len;
     
-    DIR root_dir;
-    
-    error = pf_opendir(&root_dir,"/");
-    
-    if(error)
-    {
-      sendUartString(p_uart, "OPEN DIR FAILED");
-    }
-    else
-    {
-      sendUartString(p_uart, "LISTING DIR");
-      
-      do
-      {
-        FILINFO file_info;
-        error = pf_readdir(&root_dir, &file_info);
-        
-        sendUartString(p_uart, file_info.fname);
-      }
-      while(!error);
-    }
+//     DIR root_dir;
+//     
+//     sendUartString(p_uart, "OPEN DIR\n");
+//     
+//     error = pf_opendir(&root_dir,"/");
+//     
+//     if(error)
+//     {
+//       sendUartString(p_uart, "OPEN DIR FAILED");
+//     }
+//     else
+//     {
+//       sendUartString(p_uart, "LISTING DIR");
+//       
+//       do
+//       {
+//         FILINFO file_info;
+//         error = pf_readdir(&root_dir, &file_info);
+//         
+//         sendUartString(p_uart, file_info.fname);
+//       }
+//       while(!error);
+//     }
     
     delay(2000);
     
-    sendUartString(p_uart, "Starting read of the first 512 Bytes..\n");
+    // sendUartString(p_uart, "Starting read of the first 512 Bytes..\n");
     
-    pf_read(r_buf, 512, &len);	
+    error = pf_read(r_buf, 512, &len);
     
-    for(index_char = 0; index_char < 512; index_char++)
+    if(error)
     {
-      if(index_char == 0) sendUartString(p_uart, "\r");
+      sendUartString(p_uart, "FAILED TO READ FILE\n");
+      continue;
+    }
+    
+    for(index_char = 0; index_char < len; index_char++)
+    {
+      // if(index_char == 0) sendUartString(p_uart, "\r");
       
       if(index_char%80 == 0)
       {
@@ -75,6 +90,12 @@ int main()
       while(p_uart->status.bits.tx_fifo_full);
       
       setUartTxData(p_uart, r_buf[index_char]);
+    }
+    
+    if(len < 512)
+    {
+      sendUartString(p_uart, "\nFINISHED READING FILE\n");
+      return 0;
     }
   }
 }

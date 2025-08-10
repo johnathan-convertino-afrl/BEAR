@@ -5,7 +5,10 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-include_directories(${CMAKE_SOURCE_DIR}/src/util/)
+include_directories(
+  ${CMAKE_SOURCE_DIR}/src/util/
+  ${CMAKE_SOURCE_DIR}/src/drivers/
+)
 
 set(FATFS_UTIL_SRCS
   diskio.c
@@ -16,3 +19,4 @@ set(FATFS_UTIL_SRCS
 )
 
 add_library(fatfs_util ${FATFS_UTIL_SRCS})
+target_link_libraries(fatfs_util PUBLIC uart_drv)

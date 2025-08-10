@@ -33,6 +33,7 @@
 #include <base.h>
   
 #include <stdlib.h>
+#include <string.h>
 
 #include "spi.h"
 #include "sdcard_spi.h"
@@ -152,6 +153,8 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   
   if(!p_sdcard_spi) return SD_ERROR_RETURN;
   
+  memset(p_sdcard_spi, 0, sizeof(struct s_sdcard_spi));
+  
   // setup spi device to use for communication.
   p_spi = initSpi(memory_address);
   
@@ -257,7 +260,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   //set clock to fast
   setSpiClockFreq(p_spi, SD_FAST_FREQ_HZ);
   
-  waitForTrans(p_spi, 100);
+  waitForTrans(p_spi, 1000);
   
   setSpiForceSelect(p_spi);
   
@@ -304,7 +307,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   
   if(p_sdcard_spi->state == INIT_V2)
   {
-    waitForTrans(p_spi, 1);
+    waitForTrans(p_spi, 10);
     
     setSpiForceSelect(p_spi);
     
@@ -361,7 +364,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
 }
 
 // Read the sdcard over spi in 512 byte blocks for all standards.
-uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer, uint16_t offset)
+uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer, uint16_t offset, uint16_t len)
 {
   int index;
   
@@ -382,7 +385,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   
   if(offset >= SD_FIXED_BYTES) return SD_ERROR_RETURN;
   
-  index_offset = SD_FIXED_BYTES - offset;
+  index_offset = offset;
   
   waitForTrans(p_sdcard_spi->p_spi, 1);
   
@@ -417,10 +420,17 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
     
     return SD_ERROR_RETURN;
   }
+  
+  while(offset--) recvRawData(p_sdcard_spi->p_spi);
         
-  for(index = 0; index < SD_FIXED_BYTES; index++)
+  for(index = 0; index < len; index++)
   {
-    p_buffer[(index + index_offset) & SD_INDEX_OFFSET_MASK] = recvRawData(p_sdcard_spi->p_spi);
+    p_buffer[index] = recvRawData(p_sdcard_spi->p_spi);
+  }
+  
+  for(index = index_offset + len; index < SD_FIXED_BYTES; index++)
+  {
+    recvRawData(p_sdcard_spi->p_spi);
   }
   
   crc[0] = recvRawData(p_sdcard_spi->p_spi);
@@ -472,16 +482,14 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   
   sendRawData(p_sdcard_spi->p_spi, SD_START_TOKEN);
   
-  for(index = 0; index < SD_FIXED_BYTES; index++)
+  for(index = 0; index < len; index++)
   {
-    if(index < len)
-    {
-      sendRawData(p_sdcard_spi->p_spi, p_buffer[index]);
-    }
-    else
-    {
-      sendRawData(p_sdcard_spi->p_spi, 0x00);
-    }
+    sendRawData(p_sdcard_spi->p_spi, p_buffer[index]);
+  }
+  
+  for(; index < SD_FIXED_BYTES; index++)
+  {
+    sendRawData(p_sdcard_spi->p_spi, 0x00);
   }
   
   response = recvRespOneByte(p_sdcard_spi->p_spi, SD_TOKEN_ATTEMPT);
@@ -522,8 +530,7 @@ char *getSdcardSpiStateString(struct s_sdcard_spi *p_sdcard_spi)
 static inline void sendRawData(struct s_spi *p_spi, uint8_t data)
 {
   // wait until write ready is 1, then write.
-  // while(!getSpiWriteReady(p_spi));
-  while(!getSpiTransmitNotActive(p_spi));
+  while(!getSpiWriteReady(p_spi));
   
   // set the transmit register to the input data passed.
   setSpiData(p_spi, data);
@@ -566,7 +573,7 @@ static inline void sendAppCommand(struct s_spi *p_spi, uint8_t acmd, uint32_t ar
   reponse = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
   //add a idle check?
   
-  waitForTrans(p_spi, 1);
+  waitForTrans(p_spi, 10);
   
   clrSpiForceSelect(p_spi);
   

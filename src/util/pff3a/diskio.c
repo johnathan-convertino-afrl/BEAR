@@ -4,10 +4,14 @@
 
 #include <base.h>
 
+#include <sdcard_spi/sdcard_spi.h>
+#include <uart/uart.h>
+
 #include "diskio.h"
 
-struct s_sdcard_spi g_sdcard_spi;
+static struct s_sdcard_spi g_sdcard_spi;
 
+struct s_uart *p_uart;
 
 /*-----------------------------------------------------------------------*/
 /* Initialize Disk Drive                                                 */
@@ -16,10 +20,28 @@ struct s_sdcard_spi g_sdcard_spi;
 DSTATUS disk_initialize (void)
 {
   DSTATUS status;
+  
+  // char temp[3] = {"\0"};
+  
+  // temp[0] = 'R';
+  
+  p_uart = initUart(UART_ADDR);
 
   status = initSdcardSpi(&g_sdcard_spi, SPI_ADDR, 0);
   
-  // sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
+  // temp[1] = (char)(g_sdcard_spi.last_r1 + 48);
+  
+  // sendUartString(p_uart, temp);
+  
+  // temp[1] = (char)(g_sdcard_spi.state + 48);
+  
+  // sendUartString(p_uart, temp);
+  
+  // temp[1] = (char)(status + 48);
+  
+  // sendUartString(p_uart, temp);
+  
+  sendUartString(p_uart, getSdcardSpiStateString(&g_sdcard_spi));
   
   return status;
 }
@@ -39,15 +61,25 @@ DRESULT disk_readp (
 {
   DRESULT res;
   
+  // char buffer[3] = {'\0'};
+  
   if((offset + count) > 512)
   {
     res = RES_PARERR;
     return res;
   }
 
-  res = readSdcardSpi(&g_sdcard_spi, sector, buff, offset);
+  res = readSdcardSpi(&g_sdcard_spi, sector, buff, offset, count);
   
-  // if(res > 0) sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
+//   sendUartString(p_uart, "READ RESULT");
+//   
+//   buffer[0] = buff[0];
+//   buffer[1] = buff[1];
+//   
+//   sendUartString(p_uart, buffer);
+	
+  
+  // sendUartString(p_uart, getSdcardSpiStateString(&g_sdcard_spi));
 
   return res;
 }

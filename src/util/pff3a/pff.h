@@ -30,22 +30,13 @@ extern "C" {
 
 /* Integer types used for FatFs API */
 
-#if defined(_WIN32)	/* Main development platform */
-#include <windows.h>
-#elif (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || defined(__cplusplus)	/* C99 or later */
 #include <stdint.h>
 typedef unsigned int	UINT;	/* int must be 16-bit or 32-bit */
-typedef unsigned char	BYTE;	/* char must be 8-bit */
+typedef uint8_t			BYTE;	/* char must be 8-bit */
 typedef uint16_t		WORD;	/* 16-bit unsigned integer */
 typedef uint16_t		WCHAR;	/* 16-bit unsigned integer */
 typedef uint32_t		DWORD;	/* 32-bit unsigned integer */
-#else  	/* Earlier than C99 */
-typedef unsigned int	UINT;	/* int must be 16-bit or 32-bit */
-typedef unsigned char	BYTE;	/* char must be 8-bit */
-typedef unsigned short	WORD;	/* 16-bit unsigned integer */
-typedef unsigned short	WCHAR;	/* 16-bit unsigned integer */
-typedef unsigned long	DWORD;	/* 32-bit unsigned integer */
-#endif
+
 #define PF_INTDEF 1
 
 

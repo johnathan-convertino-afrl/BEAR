@@ -9,7 +9,6 @@
 extern "C" {
 #endif
 
-#include <sdcard_spi/sdcard_spi.h>
 #include "pff.h"
 
 /* Status of Disk Functions */

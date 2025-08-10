@@ -33,7 +33,7 @@ int main()
     // read 256 KiB of SD CARD data.
     for(index = 0; index < 512; index++)
     {
-      error = readSdcardSpi(&sdcard_spi, index, r_buf, 0);
+      error = readSdcardSpi(&sdcard_spi, index, r_buf, 0, 512);
       
       if(error)
       {

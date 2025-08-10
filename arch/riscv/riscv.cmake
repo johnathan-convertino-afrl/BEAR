@@ -74,7 +74,7 @@ set( CMAKE_OBJDUMP      ${RISCV_TOOLCHAIN_BIN_PATH}/${CROSS_COMPILE}objdump
 # Set the common build flags
 
 # Set the CMAKE C flags (which should also be used by the assembler!
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -MD -fstrict-volatile-bitfields -fno-strict-aliasing" )
+set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -g -MD -fstrict-volatile-bitfields -fno-strict-aliasing" )
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}" )
 
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )

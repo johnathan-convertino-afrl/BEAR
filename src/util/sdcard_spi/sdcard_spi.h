@@ -98,10 +98,11 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   * @param address start address to read a block, even for v1 (byte size is set to 512).
   * @param p_buffer array of uint8_t (bytes) for the 512 bytes read from the block.
   * @param offset a number that will offset the read in the sector. Essentially buffer position 0 will be data that starts at that offset.
+  * @param len is the total size of the buffer in bytes.
   * 
   * @return 0 on no error, 1 for an error.
   *************************************************/
-uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer, uint16_t offset);
+uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer, uint16_t offset, uint16_t len);
 
 /*********************************************//**
   * @brief Write the sdcard over spi in 512 byte blocks for all standards.

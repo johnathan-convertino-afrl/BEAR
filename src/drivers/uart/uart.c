@@ -40,9 +40,6 @@ struct s_uart *initUart(uint32_t memory_address)
 {
   struct s_uart *p_temp = (struct s_uart *)memory_address;
 
-  p_temp->tx_fifo     = 0;
-  p_temp->status.reg  = 0;
-
   return p_temp;
 }
 
