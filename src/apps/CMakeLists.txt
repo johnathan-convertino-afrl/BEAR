@@ -77,6 +77,11 @@ if(BUILD_SDCARD_EXAMPLES)
   target_link_libraries(sdcard_raw_read.elf PRIVATE uart_drv sdcard_spi_util spi_drv)
 
   gen_target_binary(sdcard_raw_read.elf)
+  
+  add_executable(sdcard_fatfs_read.elf sdcard_fatfs_read.c)
+  target_link_libraries(sdcard_fatfs_read.elf PRIVATE uart_drv fatfs_util sdcard_spi_util spi_drv)
+
+  gen_target_binary(sdcard_fatfs_read.elf)
 
 endif()
 

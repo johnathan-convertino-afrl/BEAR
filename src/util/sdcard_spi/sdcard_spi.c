@@ -51,8 +51,9 @@
 #define SD_DATA_REJ_CRC_TOKEN   0x0B
 #define SD_DATA_REJ_WRITE_TOKEN 0x0D
 #define SD_DATA_ACCEPTED_MASK   0x0F
-#define SD_ERROR_RETURN         1
-#define SD_NOERROR_RETURN       0
+#define SD_INDEX_OFFSET_MASK    0x01FF
+#define SD_ERROR_RETURN         1 //same as STA_NOINIT from ff15/petitFS
+#define SD_NOERROR_RETURN       0 //same as STA_NOINIT from ff15/petitFS
 
 // SIZES
 #define SD_FIXED_BYTES  512 //all read/write is in 512 byte blocks for all standards.
@@ -360,12 +361,14 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
 }
 
 // Read the sdcard over spi in 512 byte blocks for all standards.
-uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer)
+uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer, uint16_t offset)
 {
   int index;
   
   uint8_t response;
   uint8_t crc[2];
+  
+  uint16_t index_offset;
   
   // switch(p_sdcard_spi->state)
   // {
@@ -376,6 +379,10 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   //   default:
   //     return SD_ERROR_RETURN;
   // }
+  
+  if(offset >= SD_FIXED_BYTES) return SD_ERROR_RETURN;
+  
+  index_offset = SD_FIXED_BYTES - offset;
   
   waitForTrans(p_sdcard_spi->p_spi, 1);
   
@@ -413,7 +420,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
         
   for(index = 0; index < SD_FIXED_BYTES; index++)
   {
-    p_buffer[index] = recvRawData(p_sdcard_spi->p_spi);
+    p_buffer[(index + index_offset) & SD_INDEX_OFFSET_MASK] = recvRawData(p_sdcard_spi->p_spi);
   }
   
   crc[0] = recvRawData(p_sdcard_spi->p_spi);
@@ -426,7 +433,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
 }
 
 // Write the sdcard over spi in 512 byte blocks for all standards.
-uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer)
+uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8_t *p_buffer, uint16_t len)
 {
   int index;
   
@@ -441,6 +448,8 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   //   default:
   //     return SD_ERROR_RETURN;
   // }
+  
+  if(len > SD_FIXED_BYTES) return SD_ERROR_RETURN;
   
   address = (p_sdcard_spi->v1 ? address * SD_FIXED_BYTES : address);
   
@@ -465,7 +474,14 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   
   for(index = 0; index < SD_FIXED_BYTES; index++)
   {
-    sendRawData(p_sdcard_spi->p_spi, p_buffer[index]);
+    if(index < len)
+    {
+      sendRawData(p_sdcard_spi->p_spi, p_buffer[index]);
+    }
+    else
+    {
+      sendRawData(p_sdcard_spi->p_spi, 0x00);
+    }
   }
   
   response = recvRespOneByte(p_sdcard_spi->p_spi, SD_TOKEN_ATTEMPT);
@@ -506,7 +522,8 @@ char *getSdcardSpiStateString(struct s_sdcard_spi *p_sdcard_spi)
 static inline void sendRawData(struct s_spi *p_spi, uint8_t data)
 {
   // wait until write ready is 1, then write.
-  while(!getSpiWriteReady(p_spi));
+  // while(!getSpiWriteReady(p_spi));
+  while(!getSpiTransmitNotActive(p_spi));
   
   // set the transmit register to the input data passed.
   setSpiData(p_spi, data);

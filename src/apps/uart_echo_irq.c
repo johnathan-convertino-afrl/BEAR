@@ -9,10 +9,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define UART_ADDR   0x44A10000
-#define PLIC_ADDR   0x0C000000
-#define CLINT_ADDR  0x02000000
-
 //CPU CLOCK FREQ, USED FOR CLINT CALC INLINE FUNCTIONS
 #define CPU_FREQ_HZ 50000000
 

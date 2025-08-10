@@ -5,11 +5,14 @@
 
 cmake_minimum_required(VERSION 3.14)
 
+include_directories(${CMAKE_SOURCE_DIR}/src/util/)
+
 set(FATFS_UTIL_SRCS
-  source/diskio.h
-  source/pff.c
-  source/pff.h
-  source/pffconf.h
+  diskio.c
+  diskio.h
+  pff.c
+  pff.h
+  pffconf.h
 )
 
 add_library(fatfs_util ${FATFS_UTIL_SRCS})

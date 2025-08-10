@@ -5,9 +5,6 @@
 
 #include <stdint.h>
 
-#define UART_ADDR   0x44A10000
-#define SPI_ADDR    0x44A20000
-
 int main()
 {
   struct s_uart *p_uart = initUart(UART_ADDR);

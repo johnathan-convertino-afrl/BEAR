@@ -4,12 +4,6 @@
 
 #include <stdint.h>
 
-#define UART_ADDR   0x44A10000
-#define GPIO_DATA ((volatile uint32_t *)(0x44A00000))
-#define GPIO_DIR  ((volatile uint32_t *)(0x44A00004))
-#define VGA_OFF   ((volatile uint32_t *)(0x44A60000))
-#define DDR_RAM   ((volatile uint32_t *)(0x90000000))
-
 int main()
 {
   struct s_uart *p_uart = initUart(UART_ADDR);
