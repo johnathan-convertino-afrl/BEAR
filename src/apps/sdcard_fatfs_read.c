@@ -42,33 +42,8 @@ int main()
     unsigned int index_char;
     unsigned int len;
     
-//     DIR root_dir;
-//     
-//     sendUartString(p_uart, "OPEN DIR\n");
-//     
-//     error = pf_opendir(&root_dir,"/");
-//     
-//     if(error)
-//     {
-//       sendUartString(p_uart, "OPEN DIR FAILED");
-//     }
-//     else
-//     {
-//       sendUartString(p_uart, "LISTING DIR");
-//       
-//       do
-//       {
-//         FILINFO file_info;
-//         error = pf_readdir(&root_dir, &file_info);
-//         
-//         sendUartString(p_uart, file_info.fname);
-//       }
-//       while(!error);
-//     }
     
     delay(2000);
-    
-    // sendUartString(p_uart, "Starting read of the first 512 Bytes..\n");
     
     error = pf_read(r_buf, 512, &len);
     
@@ -80,9 +55,7 @@ int main()
     
     for(index_char = 0; index_char < len; index_char++)
     {
-      // if(index_char == 0) sendUartString(p_uart, "\r");
-      
-      if(index_char%80 == 0)
+      if(index_char%64 == 0)
       {
         sendUartString(p_uart, "\r");
       }
@@ -94,7 +67,7 @@ int main()
     
     if(len < 512)
     {
-      sendUartString(p_uart, "\nFINISHED READING FILE\n");
+      sendUartString(p_uart, "\n\rFINISHED READING FILE\n");
       return 0;
     }
   }
