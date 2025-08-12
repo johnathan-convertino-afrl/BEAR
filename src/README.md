@@ -1,6 +1,6 @@
 # Example source code
 
-Source code folders for FPGA baremetal examples
+Source code folders for FPGA baremetal example apps and bootloader
 
 author: Jay Convertino  
 
@@ -20,4 +20,5 @@ license: MIT
 
   - apps    : Contains example applications
   - drivers : Contains drivers for devices on the system.
-  - util    : Contains librarys for items such as FAT16/32, SDCARD access, BITMAP reading, etc.
+  - util    : Contains librarys for items such as FAT16/32, SDCARD access, etc.
+  - zeb     : Contains Zero(stage) Embedded Boot(loader) for loading files into memory and then jumping to the needed execution point. 

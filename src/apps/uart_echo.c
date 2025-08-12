@@ -1,6 +1,6 @@
 #include <base.h>
 
-#include <uart/uart.h>
+#include <uart.h>
 
 #include <stdint.h>
 

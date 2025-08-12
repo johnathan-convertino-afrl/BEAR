@@ -6,8 +6,8 @@
 cmake_minimum_required(VERSION 3.14)
 
 include_directories(
-  ../../drivers/spi
-  ../../drivers/uart
+  ${CMAKE_SOURCE_DIR}/src/drivers/spi
+  ${CMAKE_SOURCE_DIR}/src/util/sdcard_spi
   )
 
 set(SDCARD_SPI_UTIL_SRCS

@@ -1,12 +1,14 @@
-# Xilinx GPIO baremetal driver
+# Multitarget GPIO driver
 
-Xilinx/bus_gpio GPIO baremetal driver
+---
 
 author: Jay Convertino  
 
 date: 2025.07.17  
 
-license: MIT
+license: MIT  
+
+---
 
 ## Release Versions
 ### Current
@@ -16,4 +18,11 @@ license: MIT
   - none
   
 ## Info
-  Use initGpio to setup a struct at the device memory address. Use the struct to access the device registers.
+
+### Devices
+  Target Devices:
+  - Xilinx GPIO
+  - AFRL bus gpio
+  
+### Usage
+  - Use initGPIO to setup a struct at the device memory address. Use the struct to access the device registers.

@@ -1,9 +1,9 @@
 #include <base.h>
 #include <riscv-csr.h>
 
-#include <uart/uart.h>
-#include <plic/plic.h>
-#include <clint/clint.h>
+#include <uart.h>
+#include <plic.h>
+#include <clint.h>
 #include <irq/vector-table.h>
 
 #include <stdint.h>

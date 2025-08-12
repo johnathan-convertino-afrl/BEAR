@@ -1,10 +1,10 @@
 #include <base.h>
 #include <riscv-csr.h>
 
-#include <gpio/gpio.h>
-#include <plic/plic.h>
-#include <clint/clint.h>
-#include <uart/uart.h>
+#include <gpio.h>
+#include <plic.h>
+#include <clint.h>
+#include <uart.h>
 #include <irq/vector-table.h>
 
 #include <stdint.h>

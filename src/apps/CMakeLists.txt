@@ -14,10 +14,15 @@ endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR} -std=c99 -Os -g -Wall -Wextra -ffunction-sections ")
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/src/drivers/
-  ${CMAKE_SOURCE_DIR}/src/util/
-)
+# include_directories(
+#   ${CMAKE_SOURCE_DIR}/src/drivers/
+#   ${CMAKE_SOURCE_DIR}/src/util/
+# )
+
+foreach(DRIVER_LIB IN LISTS DRIVER_LIST)
+  get_target_property(LIB_INCLUDES ${DRIVER_LIB} INCLUDE_DIRECTORIES)
+  include_directories(${LIB_INCLUDES})
+endforeach()
 
 set(APP_LIST
   led_gpio_timer_irq

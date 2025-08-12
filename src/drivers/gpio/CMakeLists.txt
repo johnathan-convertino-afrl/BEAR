@@ -6,15 +6,15 @@
 cmake_minimum_required(VERSION 3.14)
 
 include_directories(
-  ../gpio
-  )
+  ${CMAKE_SOURCE_DIR}/src/drivers/gpio
+)
 
 set(GPIO_DRV_SRCS
   gpio.h
 )
 
 if(XILINX_DRV_UART)
-  list(APPEND GPIO_DRV_SRCS src/xilinx_gpio.c)
+  list(APPEND GPIO_DRV_SRCS src/xilinx/gpio.c)
 endif()
 
 add_library(gpio_drv ${GPIO_DRV_SRCS})

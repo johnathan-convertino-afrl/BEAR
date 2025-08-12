@@ -1,7 +1,7 @@
 #include <base.h>
 
-#include <uart/uart.h>
-#include <sdcard_spi/sdcard_spi.h>
+#include <uart.h>
+#include <sdcard_spi.h>
 
 #include <stdint.h>
 

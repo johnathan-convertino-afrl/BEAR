@@ -1,6 +1,6 @@
 #include <base.h>
 
-#include <uart/uart.h>
+#include <uart.h>
 #include <pff3a/diskio.h>
 
 #include <stdint.h>

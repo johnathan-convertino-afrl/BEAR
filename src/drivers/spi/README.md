@@ -1,12 +1,14 @@
-# Altera SPI Driver
+# Multitarget SPI driver
 
-Altera SPI core driver
+---
 
 author: Jay Convertino  
 
 date: 2025.07.17  
 
-license: MIT
+license: MIT  
+
+---
 
 ## Release Versions
 ### Current
@@ -16,4 +18,11 @@ license: MIT
   - none
   
 ## Info
-  Use initSpi to setup a struct at the device memory address. Use the struct to access the device registers.
+
+### Devices
+  Target Devices:
+  - Altera SPI
+  - AFRL bus spi master
+  
+### Usage
+  - Use initSpi to setup a struct at the device memory address. Use the struct to access the device registers.

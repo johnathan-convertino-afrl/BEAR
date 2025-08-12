@@ -1,12 +1,16 @@
-# Xilinx UART lite baremetal driver
+# UART baremetal driver
 
-Xilinx/bus_uart UART lite baremetal driver
+Multitarget UART driver
+
+---
 
 author: Jay Convertino  
 
 date: 2025.07.17  
 
-license: MIT
+license: MIT  
+
+---
 
 ## Release Versions
 ### Current
@@ -16,4 +20,11 @@ license: MIT
   - none
   
 ## Info
-  Use initUart to setup a struct at the device memory address. Use the struct to access the device registers.
+
+### Devices
+  Target Devices:
+  - xilinx uart lite
+  - AFRL bus uart lite
+  
+### Usage
+  - Use initUart to setup a struct at the device memory address. Use the struct to access the device registers.
