@@ -5,6 +5,14 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-add_subdirectory(src)
+if(EXISTS ${RISCV_GCC_COMPILER})
+  add_subdirectory(common)
+  
+  if(PLATFORM_VERONICA)
+    add_subdirectory(veronica)
+  endif()
 
-add_subdirectory(irq)
+  if(PLATFORM_WALLY)
+    add_subdirectory(wally)
+  endif()
+endif()

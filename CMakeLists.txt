@@ -12,5 +12,6 @@ if(!CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set(CMAKE_INSTALL_PREFIX "/usr/local/" CACHE PATH "..." FORCE)
 endif()
 
-add_subdirectory(src)
 add_subdirectory(arch)
+add_subdirectory(src)
+

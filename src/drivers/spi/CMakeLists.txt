@@ -5,9 +5,16 @@
 
 cmake_minimum_required(VERSION 3.14)
 
+include_directories(
+  ../spi
+  )
+
 set(SPI_DRV_SRCS
-  spi.c
   spi.h
 )
+
+if(ALTERA_DRV_SPI)
+  list(APPEND SPI_DRV_SRCS src/altera_spi.c)
+endif()
 
 add_library(spi_drv ${SPI_DRV_SRCS})

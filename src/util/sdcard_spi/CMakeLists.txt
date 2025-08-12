@@ -16,3 +16,4 @@ set(SDCARD_SPI_UTIL_SRCS
 )
 
 add_library(sdcard_spi_util ${SDCARD_SPI_UTIL_SRCS})
+target_link_libraries(sdcard_spi_util PUBLIC spi_drv)

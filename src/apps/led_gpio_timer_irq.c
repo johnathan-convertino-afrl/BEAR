@@ -10,8 +10,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-//CPU CLOCK FREQ, USED FOR CLINT CALC INLINE FUNCTIONS
-#define CPU_FREQ_HZ 50000000
 
 const char g_message[] = "LED EXAMPLE TIMER IRQ";
 

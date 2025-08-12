@@ -9,9 +9,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-//CPU CLOCK FREQ, USED FOR CLINT CALC INLINE FUNCTIONS
-#define CPU_FREQ_HZ 50000000
-
 struct s_uart *gp_uart;
 struct s_plic *gp_plic;
 struct s_clint *gp_clint;

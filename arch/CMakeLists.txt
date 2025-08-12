@@ -5,6 +5,6 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-if(RISCV_GCC_COMPILER)
+if(EXISTS ${RISCV_GCC_COMPILER})
   add_subdirectory(riscv)
 endif()
