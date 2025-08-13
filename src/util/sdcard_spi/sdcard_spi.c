@@ -243,7 +243,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
       break;
     default:
       //unknown failure
-      p_sdcard_spi->state = UNKNOWN_FAIL;
+      p_sdcard_spi->state = CMD8_FAIL;
       return SD_ERROR_RETURN;
   }
   
