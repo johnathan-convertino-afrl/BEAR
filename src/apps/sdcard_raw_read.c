@@ -21,6 +21,8 @@ int main()
   sendUartString(p_uart, "\n\r");
 
   sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
+  
+  while(p_uart->status.bits.tx_fifo_full);
 
   for(;;)
   {
