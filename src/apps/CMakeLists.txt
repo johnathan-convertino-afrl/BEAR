@@ -12,7 +12,7 @@ endif()
 
 # link_libraries()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR} -std=c99 -Os -g -Wall -Wextra -ffunction-sections ")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR} -std=c99 -g -Wall -Wextra -ffunction-sections ")
 
 # include_directories(
 #   ${CMAKE_SOURCE_DIR}/src/drivers/

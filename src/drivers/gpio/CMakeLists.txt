@@ -14,7 +14,11 @@ set(GPIO_DRV_SRCS
 )
 
 if(XILINX_DRV_UART)
-  list(APPEND GPIO_DRV_SRCS src/xilinx/gpio.c)
+  list(APPEND GPIO_DRV_SRCS src/xilinx/gpio.c src/xilinx/gpio_map.h)
+  
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/src/drivers/gpio/src/xilinx/
+  )
 endif()
 
 add_library(gpio_drv ${GPIO_DRV_SRCS})

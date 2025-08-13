@@ -1,11 +1,15 @@
 # FPGA baremetal example apps and zero stage bootloader (zeb)
-# Currently a RISCV32 only C based set of libraries for baremetal examples. Designed to target multiple architectures in the future.
+## Currently a RISCV32 only C based set of libraries for baremetal examples. Designed to target multiple architectures in the future.
+
+---
 
 author: Jay Convertino  
 
-date: 2024.10.02
+date: 2024.10.02  
 
-license: MIT
+license: MIT  
+
+---
 
 ## Release Versions
 ### Current
@@ -31,4 +35,6 @@ license: MIT
 
 ## Cmake options
   All applications are build OR the zero stage bootloader is built.
+  
   - cmake ../  -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
+  - cmake ../  -DBOOT_LOADER=ON -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
