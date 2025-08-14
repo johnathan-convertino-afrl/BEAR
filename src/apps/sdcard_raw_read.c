@@ -22,13 +22,13 @@ int main()
 
   sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
   
-  while(p_uart->status.bits.tx_fifo_full);
+  return 0;
 
   for(;;)
   {
     int index_char;
     
-    delay(2000);
+    __delay_ms(2);
     
     sendUartString(p_uart, "Starting read..\n");
     

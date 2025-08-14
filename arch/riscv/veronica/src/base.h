@@ -20,14 +20,36 @@
 
 //CPU CLOCK FREQ, USED FOR CLINT CALC INLINE FUNCTIONS
 #define CPU_FREQ_HZ 50000000
+#define MS_DIVISOR  10000
+#define US_DIVISOR  5000000
 
-static inline void delay(uint32_t len) {
-
+static inline void __delay(uint32_t len)
+{
   uint32_t index = 0;
 
   for(index = 0; index < len; index++)
   {
     __asm__ volatile ("nop");
+  }
+}
+
+static inline void __delay_ms(uint32_t len)
+{
+  uint32_t index = 0;
+  
+  for(index = 0; index < len; index++)
+  {
+    __delay(CPU_FREQ_HZ/MS_DIVISOR);
+  }
+}
+
+static inline void __delay_us(uint32_t len)
+{
+  uint32_t index = 0;
+  
+  for(index = 0; index < len; index++)
+  {
+    __delay(CPU_FREQ_HZ/US_DIVISOR);
   }
 }
 

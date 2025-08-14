@@ -8,11 +8,11 @@ int main()
 {
   struct s_uart *p_uart = initUart(UART_ADDR);
 
-  delay(2000);
+  __delay_ms(2);
 
   for(;;)
   {
-    delay(2000);
+    __delay_ms(2);
 
     if(p_uart->status.bits.rx_fifo_valid)
     {

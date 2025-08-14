@@ -13,7 +13,7 @@ int main()
   
   struct s_spi  *p_spi  = initSpi(SPI_ADDR);
 
-  delay(2000);
+  __delay_ms(2);
   
   setSpiClockFreq(p_spi, 1000000);
 

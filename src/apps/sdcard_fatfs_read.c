@@ -43,7 +43,7 @@ int main()
     unsigned int len;
     
     
-    delay(2000);
+    __delay_ms(2);
     
     error = pf_read(r_buf, 512, &len);
     

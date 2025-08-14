@@ -43,10 +43,10 @@
 #define SD_SLOW_FREQ_HZ         100000
 #define SD_INIT_WORD            0xFF
 #define SD_NCR_ATTEMPT          32
-#define SD_BASE_ATTEMPT         5000
-#define SD_TOKEN_ATTEMPT        (SD_BASE_ATTEMPT * SD_SLOW_FREQ_HZ)/SD_FAST_FREQ_HZ 
-#define SD_INIT_ATTEMPT         (SD_BASE_ATTEMPT * SD_SLOW_FREQ_HZ)/SD_FAST_FREQ_HZ
-#define SD_MAX_INIT_CARD_TRIES  (SD_BASE_ATTEMPT * SD_SLOW_FREQ_HZ)/SD_FAST_FREQ_HZ
+#define SD_BASE_ATTEMPT         100
+#define SD_TOKEN_ATTEMPT        SD_BASE_ATTEMPT
+#define SD_INIT_ATTEMPT         SD_BASE_ATTEMPT
+#define SD_MAX_INIT_CARD_TRIES  SD_BASE_ATTEMPT
 #define SD_START_TOKEN          0xFE
 #define SD_DATA_ACCEPTED_TOKEN  0x05
 #define SD_DATA_REJ_CRC_TOKEN   0x0B
@@ -159,7 +159,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   p_spi = initSpi(memory_address);
   
   setSpiMode(p_spi, 0, 0);
-  
+
   setSpiClockFreq(p_spi, SD_SLOW_FREQ_HZ);
   
   //set struct members
@@ -179,7 +179,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
       sendRawData(p_spi, SD_INIT_WORD);
     }
     
-    waitForTrans(p_spi, 1000);
+    waitForTrans(p_spi, 100);
     
     if(getSpiFifoEnabled(p_spi)) setSpiResetRXfifo(p_spi);
     
@@ -196,7 +196,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     
     init_attempts++;
     
-    waitForTrans(p_spi, 1000);
+    waitForTrans(p_spi, 10);
   }
   while((sd_response[0] != SD_RESP_IDLE_BIT_MASK_R1) && (init_attempts < SD_INIT_ATTEMPT));
 
@@ -204,8 +204,6 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
         
   if((sd_response[0] != SD_RESP_IDLE_BIT_MASK_R1) && (init_attempts >= SD_INIT_ATTEMPT))
   {
-    clrSpiChipSelect(p_spi, cs_num);
-    
     p_sdcard_spi->state = CMD0_FAIL;
     
     return SD_ERROR_RETURN;
@@ -257,10 +255,10 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   }
   while(getSpiReadReady(p_spi));
   
+  waitForTrans(p_spi, 10);
+  
   //set clock to fast
   setSpiClockFreq(p_spi, SD_FAST_FREQ_HZ);
-  
-  waitForTrans(p_spi, 1000);
   
   setSpiForceSelect(p_spi);
   
@@ -279,11 +277,11 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     return SD_ERROR_RETURN;
   }
   
+  waitForTrans(p_spi, 10);
+  
   init_attempts = SD_MAX_INIT_CARD_TRIES;
   do
   {
-    waitForTrans(p_spi, 10);
-
     setSpiForceSelect(p_spi);
     
     //command arg for version one cards does not set high capacity. version two attempts to set this.
@@ -294,6 +292,8 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     p_sdcard_spi->last_r1 = sd_response[0];
     
     clrSpiForceSelect(p_spi);
+    
+    waitForTrans(p_spi, 100);
     
     init_attempts--;
   }
@@ -307,7 +307,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   
   if(p_sdcard_spi->state == INIT_V2)
   {
-    waitForTrans(p_spi, 10);
+    waitForTrans(p_spi, 1000);
     
     setSpiForceSelect(p_spi);
     
@@ -573,11 +573,11 @@ static inline void sendAppCommand(struct s_spi *p_spi, uint8_t acmd, uint32_t ar
   reponse = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
   //add a idle check?
   
-  waitForTrans(p_spi, 10);
+  waitForTrans(p_spi, 0);
   
   clrSpiForceSelect(p_spi);
   
-  delay(10);
+  __delay_us(10);
   
   setSpiForceSelect(p_spi);
   
@@ -632,5 +632,5 @@ static inline void waitForTrans(struct s_spi *p_spi, uint32_t len)
 {
   while(!getSpiTransmitNotActive(p_spi));
   
-  delay(len);
+  __delay_us(len);
 }
