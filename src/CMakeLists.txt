@@ -9,7 +9,7 @@ add_subdirectory(drivers)
 add_subdirectory(util)
 
 if(BUILD_BOOT_LOADER)
-  add_subdirectory(zeb)
+  add_subdirectory(zebbs)
 else()
   add_subdirectory(apps)
 endif()

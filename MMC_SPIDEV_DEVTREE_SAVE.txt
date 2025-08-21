@@ -1,0 +1,15 @@
+	mmc-slot@0 {
+		compatible = "mmc-spi-slot";
+		reg = <0>;
+		status = "okay";
+		voltage-ranges = <1800 3600>;
+		spi-max-frequency = <25000000>;
+		disable-wp;
+		disable-cd;
+	};
+
+		spidev@0{
+		compatible = "rohm,dh2228fv";
+		reg = <0>;
+		spi-max-frequency = <25000000>;
+	};

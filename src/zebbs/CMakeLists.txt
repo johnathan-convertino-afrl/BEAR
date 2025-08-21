@@ -20,7 +20,7 @@ foreach(DRIVER_LIB IN LISTS DRIVER_LIST)
 endforeach()
 
 set(BOOT_LIST
-  zeb
+  zebbs
 )
 
 function(gen_target_binary TARGET_NAME)

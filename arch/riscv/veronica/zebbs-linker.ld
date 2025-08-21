@@ -11,16 +11,18 @@ ENTRY(_enter)
 
 MEMORY
 {
-    ram (arw!xi) : ORIGIN = 0x80000000, LENGTH = 32k
+    itim (airwx) : ORIGIN = 0x00800000, LENGTH = 1k
+    ram (arw!xi) : ORIGIN = 0x08000000, LENGTH = 4k
+    rom (irx!wa) : ORIGIN = 0x20010000, LENGTH = 8k
 }
 
 PHDRS
 {
-    ram PT_LOAD;
+    rom PT_LOAD;
     ram_init PT_LOAD;
     tls PT_TLS;
     ram PT_LOAD;
-    ram_init PT_LOAD;
+    itim_init PT_LOAD;
     text PT_LOAD;
     lim_init PT_LOAD;
 }
@@ -35,7 +37,7 @@ SECTIONS
      * where 0xf00 can be replaced with a multiple of 16 of your choice.
      *
      * __stack_size is PROVIDE-ed as a symbol so that initialization code
-     * initializes the stack pointers for each hart at the right offset fram
+     * initializes the stack pointers for each hart at the right offset from
      * the _sp symbol.
      */
     __stack_size = DEFINED(__stack_size) ? __stack_size : 0x400;
@@ -77,8 +79,8 @@ SECTIONS
     /* The RAM memories map for ECC scrubbing */
     PROVIDE( metal_dtim_0_memory_start = 0x80000000 );
     PROVIDE( metal_dtim_0_memory_end = 0x80000000 + 0x4000 );
-    PROVIDE( metal_ram_0_memory_start = 0x8000000 );
-    PROVIDE( metal_ram_0_memory_end = 0x8000000 + 0x2000 );
+    PROVIDE( metal_itim_0_memory_start = 0x8000000 );
+    PROVIDE( metal_itim_0_memory_end = 0x8000000 + 0x2000 );
 
     /* ROM SECTION
      *
@@ -94,17 +96,17 @@ SECTIONS
         KEEP (*(.text.metal.init.*))
         KEEP (*(SORT_NONE(.init)))
         KEEP (*(.text.libgloss.start))
-    } >ram :ram
+    } >rom :rom
 
     .fini : {
         KEEP (*(SORT_NONE(.fini)))
-    } >ram :ram
+    } >rom :rom
 
     .preinit_array : ALIGN(8) {
         PROVIDE_HIDDEN (__preinit_array_start = .);
         KEEP (*(.preinit_array))
         PROVIDE_HIDDEN (__preinit_array_end = .);
-    } >ram :ram
+    } >rom :rom
 
     .init_array : ALIGN(8) {
         PROVIDE_HIDDEN (__init_array_start = .);
@@ -115,7 +117,7 @@ SECTIONS
         KEEP (*(SORT_BY_INIT_PRIORITY(.metal.init_array.*)));
         KEEP (*(.metal.init_array));
         PROVIDE_HIDDEN ( metal_constructors_end = .);
-    } >ram :ram
+    } >rom :rom
 
     .fini_array : ALIGN(8) {
         PROVIDE_HIDDEN (__fini_array_start = .);
@@ -126,7 +128,7 @@ SECTIONS
         KEEP (*(SORT_BY_INIT_PRIORITY(.metal.fini_array.*)));
         KEEP (*(.metal.fini_array));
         PROVIDE_HIDDEN ( metal_destructors_end = .);
-    } >ram :ram
+    } >rom :rom
 
  
 
@@ -137,7 +139,7 @@ SECTIONS
         KEEP (*(SORT(.ctors.*)))
         KEEP (*(.ctors))
         KEEP (*(.metal.ctors .metal.ctors.*))
-    } >ram :ram
+    } >rom :rom
 
     .dtors : {
         KEEP (*crtbegin.o(.dtors))
@@ -146,7 +148,7 @@ SECTIONS
         KEEP (*(SORT(.dtors.*)))
         KEEP (*(.dtors))
         KEEP (*(.metal.dtors .metal.dtors.*))
-    } >ram : ram
+    } >rom : rom
 
     .rodata : {
         *(.rdata)
@@ -158,39 +160,39 @@ SECTIONS
         *(.srodata.cst4)
         *(.srodata.cst2)
         *(.srodata .srodata.*)
-    } >ram :ram
+    } >rom :rom
 
     /* ITIM SECTION
      *
-     * The following sections contain data which is copied fram read-only
+     * The following sections contain data which is copied from read-only
      * memory into an instruction tightly-integrated memory (ITIM), if one
      * is present in the design, during pre-main program initialization.
      *
      * Generally, the data copied into the ITIM should be performance-critical
-     * functions which benefit fram low instruction-fetch latency.
+     * functions which benefit from low instruction-fetch latency.
      */
 
-    .ram : ALIGN(8) {
-        *(.ram .ram.*)
-    } >ram AT>ram :ram_init
+    .itim : ALIGN(8) {
+        *(.itim .itim.*)
+    } >itim AT>rom :itim_init
 
-    PROVIDE( metal_segment_ram_source_start = LOADADDR(.ram) );
-    PROVIDE( metal_segment_ram_target_start = ADDR(.ram) );
-    PROVIDE( metal_segment_ram_target_end = ADDR(.ram) + SIZEOF(.ram) );
+    PROVIDE( metal_segment_itim_source_start = LOADADDR(.itim) );
+    PROVIDE( metal_segment_itim_target_start = ADDR(.itim) );
+    PROVIDE( metal_segment_itim_target_end = ADDR(.itim) + SIZEOF(.itim) );
 
     /* LIM SECTION
      *
-     * The following sections contain data which is copied fram read-only
+     * The following sections contain data which is copied from read-only
      * memory into a loosely integrated memory (LIM), which is shared with L2
      * cache, during pre-main program initialization.
      *
      * Generally, the data copied into the LIM should be performance-critical
-     * functions which benefit fram low instruction-fetch latency.
+     * functions which benefit from low instruction-fetch latency.
      */
 
     .lim : ALIGN(8) {
         *(.lim .lim.*)
-    } >ram AT>ram :lim_init
+    } >ram AT>rom :lim_init
 
     PROVIDE( metal_segment_lim_source_start = LOADADDR(.lim) );
     PROVIDE( metal_segment_lim_target_start = ADDR(.lim) );
@@ -207,11 +209,11 @@ SECTIONS
         *(.text.startup .text.startup.*)
         *(.text .text.*)
         *(.gnu.linkonce.t.*)
-    } >ram :text
+    } >rom :text
 
     /* RAM SECTION
      *
-     * The following sections contain data which is copied fram read-only
+     * The following sections contain data which is copied from read-only
      * memory into a read-write-capable memory such as data tightly-integrated
      * memory (DTIM) or another main memory, as well as the BSS, stack, and
      * heap.
@@ -229,12 +231,12 @@ SECTIONS
         PROVIDE( __global_pointer$ = . + 0x800 );
         *(.sdata .sdata.* .sdata2.*)
         *(.gnu.linkonce.s.*)
-    } >ram AT>ram :ram_init
+    } >ram AT>rom :ram_init
 
     .tdata : ALIGN(8) {
         PROVIDE( __tls_base = . );
 	*(.tdata .tdata.* .gnu.linkonce.td.*)
-    } >ram AT>ram :tls :ram_init
+    } >ram AT>rom :tls :ram_init
 
     PROVIDE( __tdata_source = LOADADDR(.tdata) );
     PROVIDE( __tdata_size = SIZEOF(.tdata) );

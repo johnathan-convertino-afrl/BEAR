@@ -5,8 +5,10 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-set(BARE_METAL_STARTUP
-  startup.c
-)
+if(BUILD_BOOT_LOADER)
+  set(BARE_METAL_STARTUP zebbs-startup.c)
+else()
+  set(BARE_METAL_STARTUP apps-startup.c)
+endif()
 
 add_library(bare_metal_startup OBJECT ${BARE_METAL_STARTUP})

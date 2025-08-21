@@ -60,7 +60,11 @@ set( CMAKE_SYSTEM_NAME          Generic )
 set( CMAKE_SYSTEM_PROCESSOR     rv32imac_zicsr )
 set( CMAKE_EXECUTABLE_SUFFIX    ".elf")
 
-set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/linker.ld")
+if(BUILD_BOOT_LOADER)
+  set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/zebbs-linker.ld")
+else()
+  set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/apps-linker.ld")
+endif()
 
 # specify the cross compiler. We force the compiler so that CMake doesn't
 # attempt to build a simple test program as this will fail without us using
@@ -92,6 +96,6 @@ set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
 set( CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
 set( CMAKE_EXE_LINKER_FLAGS   "-T ${LINKER_SCRIPT} -march=${CMAKE_SYSTEM_PROCESSOR} -lgcc -mcmodel=medany -nostartfiles -ffreestanding " )
 
-include_directories(${CMAKE_SOURCE_DIR}/arch/riscv/veronica)
+include_directories(${CMAKE_SOURCE_DIR}/arch/riscv/common/)
 
 include_directories(${CMAKE_SOURCE_DIR}/arch/riscv/veronica/src/)

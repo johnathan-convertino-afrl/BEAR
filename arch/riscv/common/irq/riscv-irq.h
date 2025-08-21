@@ -6,8 +6,8 @@
 
 */
 
-#ifndef RISCV_INTERRUPTS_H
-#define RISCV_INTERRUPTS_H
+#ifndef __RISCV_INTERRUPTS_H
+#define __RISCV_INTERRUPTS_H
 
 enum {
     RISCV_INT_POS_MSI = 3,

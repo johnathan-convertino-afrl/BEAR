@@ -1,6 +1,6 @@
-# FPGA baremetal example apps and zero stage bootloader (zeb)
+# BEAR, RISCV baremetal example apps and zero stage bootloader (zebbs)
 ## Currently a RISCV32 only C based set of libraries for baremetal examples. Designed to target multiple architectures in the future.
-
+### Baremetal Examples and Apps for RiscV
 ---
 
 author: Jay Convertino  

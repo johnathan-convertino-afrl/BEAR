@@ -6,8 +6,8 @@
 
 */
 
-#ifndef RISCV_CSR_H
-#define RISCV_CSR_H
+#ifndef __RISCV_CSR_H
+#define __RISCV_CSR_H
 
 #include <stdint.h>
 

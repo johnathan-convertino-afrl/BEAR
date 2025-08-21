@@ -40,7 +40,7 @@ int main()
   // Setup timer for 1 second interval
   timestamp = getClintMTime(gp_clint);
 
-  setClintMTimeCmpOffset(gp_clint, calcMtimecmpSeconds(CPU_FREQ_HZ, 1));
+  setClintMTimeCmpOffset(gp_clint, calcMtimecmpSeconds(BUS_FREQ_HZ, 1));
 
   for(;;)
   {
