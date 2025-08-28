@@ -89,6 +89,95 @@ void sendUartString(struct s_uart *p_uart, const char *p_string);
   *************************************************/
 int recvUartString(struct s_uart *p_uart, char *p_string, int len);
 
+/*********************************************//**
+  * @brief check if rx fifo is full
+  *
+  * @param p_uart pre-initialized struct from initUart
+  *
+  * @return 1 for full, 0 for not.
+  *************************************************/
+int getUartRxFifoFull(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief check if rx fifo has valid data
+  *
+  * @param p_uart pre-initialized struct from initUart
+  *
+  * @return 1 for valid, 0 for not.
+  *************************************************/
+int getUartRxFifoValid(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief check if TX fifo is empty
+  *
+  * @param p_uart pre-initialized struct from initUart
+  *
+  * @return 1 for empty, 0 for not.
+  *************************************************/
+int getUartTxFifoEmpty(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief check if tx fifo is full
+  *
+  * @param p_uart pre-initialized struct from initUart
+  *
+  * @return 1 for full, 0 for not.
+  *************************************************/
+int getUartTxFifoFull(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief check if interrupt is enabled
+  *
+  * @param p_uart pre-initialized struct from initUart
+  *
+  * @return 1 for enabled, 0 for not.
+  *************************************************/
+int getUartIrqEna(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief check if there is an error
+  *
+  * @param p_uart pre-initialized struct from initUart
+  *
+  * @return 0 no error, 1 overrun, 2 frame, 4 parity. These can add up to 7. 
+  *************************************************/
+int getUartError(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief reset tx fifo
+  * 
+  * @param p_uart pre initialized struct from initUart
+  *************************************************/
+void setUartResetTXfifo(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief reset rx fifo
+  * 
+  * @param p_uart pre initialized struct from initUart
+  *************************************************/
+void setUartResetRXfifo(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief reset rx fifo
+  * 
+  * @param p_uart pre initialized struct from initUart
+  *************************************************/
+void setUartResetRXfifo(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief enable uart interrupt generation
+  * 
+  * @param p_uart pre initialized struct from initUart
+  *************************************************/
+void setUartIntrEna(struct s_uart *p_uart);
+
+/*********************************************//**
+  * @brief disable uart interrupt generation
+  * 
+  * @param p_uart pre initialized struct from initUart
+  *************************************************/
+void unsetUartIntrEna(struct s_uart *p_uart);
+
 #ifdef __cplusplus
 }
 #endif

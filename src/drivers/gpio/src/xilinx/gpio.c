@@ -49,3 +49,75 @@ struct s_gpio *initGpio(uint32_t memory_address)
 
   return p_temp;
 }
+
+// Write data to the GPIO 1 port
+void setGpioData1(struct s_gpio *p_gpio, uint32_t data)
+{
+  if(!p_gpio) return;
+  
+  p_gpio->data1 = data;
+}
+
+// Read data to the GPIO 1 port
+uint32_t getGpioData1(struct s_gpio *p_gpio)
+{
+  if(!p_gpio) return 0;
+  
+  return p_gpio->data1;
+}
+
+// Set GPIO tristate bits for data1 (0 output, 1 input).
+void setGpioTriData1(struct s_gpio *p_gpio, uint32_t data)
+{
+  if(!p_gpio) return;
+  
+  p_gpio->tri1 = data;
+}
+
+// enable gpio global interrupt generation
+void setGpioIntrEna(struct s_gpio *p_gpio)
+{
+  if(!p_gpio) return;
+  
+  p_gpio->gier.bits.gie = 1;
+}
+
+// disable gpio global interrupt generation
+void unsetGpioIntrEna(struct s_gpio *p_gpio)
+{
+  if(!p_gpio) return;
+  
+  p_gpio->gier.bits.gie = 0;
+}
+
+// enable gpio channel one interrupt generation
+void setGpioChanOneIntrEna(struct s_gpio *p_gpio)
+{
+  if(!p_gpio) return;
+  
+  p_gpio->ier.bits.ch1_ena = 1;
+}
+
+// disable gpio channel one interrupt generation
+void unsetGpioChanOneIntrEna(struct s_gpio *p_gpio)
+{
+  if(!p_gpio) return;
+  
+  p_gpio->ier.bits.ch1_ena = 0;
+}
+
+// get channel one interrupt status
+uint8_t getGpioChanOneIntrStatus(struct s_gpio *p_gpio)
+{
+  if(!p_gpio) return -1;
+  
+  return p_gpio->isr.bits.ch1_sta;
+}
+
+// Acknoledge the current interrupt
+void ackGpioChanOneIntr(struct s_gpio *p_gpio)
+{
+  if(!p_gpio) return;
+  
+  p_gpio->isr.bits.ch1_sta = 1;
+}

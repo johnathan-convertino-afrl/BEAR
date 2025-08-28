@@ -53,6 +53,75 @@ extern "C" {
   *************************************************/
 struct s_gpio *initGpio(uint32_t memory_address);
 
+/*********************************************//**
+  * @brief Write data to the GPIO 1 port
+  *
+  * @param p_gpio is the object returned from initGpio.
+  * @param data is the 32bit data word to set the output to.
+  *************************************************/
+void setGpioData1(struct s_gpio *p_gpio, uint32_t data);
+
+/*********************************************//**
+  * @brief Read data to the GPIO 1 port
+  *
+  * @param p_gpio is the object returned from initGpio.
+  * 
+  * @return 32bit data word from gpio
+  *************************************************/
+uint32_t getGpioData1(struct s_gpio *p_gpio);
+
+/*********************************************//**
+  * @brief Set GPIO tristate bits for data1 (0 output, 1 input).
+  *
+  * @param p_gpio is the object returned from initGpio.
+  * @param data is the 32bit data word to set tristate to.
+  *************************************************/
+void setGpioTriData1(struct s_gpio *p_gpio, uint32_t data);
+
+/*********************************************//**
+  * @brief enable gpio global interrupt generation
+  * 
+  * @param p_gpio pre initialized struct from initGpio
+  *************************************************/
+void setGpioIntrEna(struct s_gpio *p_gpio);
+
+/*********************************************//**
+  * @brief disable gpio global interrupt generation
+  * 
+  * @param p_gpio pre initialized struct from initGpio
+  *************************************************/
+void unsetGpioIntrEna(struct s_gpio *p_gpio);
+
+/*********************************************//**
+  * @brief enable gpio channel one interrupt generation
+  * 
+  * @param p_gpio pre initialized struct from initGpio
+  *************************************************/
+void setGpioChanOneIntrEna(struct s_gpio *p_gpio);
+
+/*********************************************//**
+  * @brief disable gpio channel one interrupt generation
+  * 
+  * @param p_gpio pre initialized struct from initGpio
+  *************************************************/
+void unsetGpioChanOneIntrEna(struct s_gpio *p_gpio);
+
+/*********************************************//**
+  * @brief get channel one interrupt status
+  * 
+  * @param p_gpio pre initialized struct from initGpio
+  * 
+  * @return current Interrupt status, 1 it has been triggered, 0 it has not.
+  *************************************************/
+uint8_t getGpioChanOneIntrStatus(struct s_gpio *p_gpio);
+
+/*********************************************//**
+  * @brief Acknoledge the current interrupt
+  * 
+  * @param p_gpio pre initialized struct from initGpio
+  *************************************************/
+void ackGpioChanOneIntr(struct s_gpio *p_gpio);
+
 #ifdef __cplusplus
 }
 #endif

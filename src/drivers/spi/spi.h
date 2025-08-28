@@ -199,6 +199,34 @@ void unsetSpiBlockRXfifo(struct s_spi *p_spi);
   *************************************************/
 void setSpiMode(struct s_spi *p_spi, uint8_t cpha, uint8_t cpol);
 
+/*********************************************//**
+  * @brief set rx data available(ready, status bit will match) interrupt.
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void setSpiIrqRxEna(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief unset rx data available(ready, status bit will match) interrupt (disable).
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void unsetSpiIrqRxEna(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief set tx data available(ready, status bit will match) interrupt.
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void setSpiIrqTxEna(struct s_spi *p_spi);
+
+/*********************************************//**
+  * @brief unset tx data available(ready, status bit will match) interrupt (disable).
+  * 
+  * @param p_spi pre initialized struct from initSpi
+  *************************************************/
+void unsetSpiIrqTxEna(struct s_spi *p_spi);
+
 #ifdef __cplusplus
 }
 #endif

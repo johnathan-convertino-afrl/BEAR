@@ -40,18 +40,18 @@ int main()
   }
   while(index > 0);
   
-  if(error) sendUartString(p_uart, "ZEBBS: FAILED TO READ APP OR UBOOT BINARY");
+  if(error) sendUartString(p_uart, "ZEBBS: FAILED TO READ BINARY");
   
   p_buf = (uint8_t *)(index ? UBOOT_START : DDR_ADDR);
 
   //if error index will be 0 and we will jump to ddr, this is so jtag loaded apps can be run after a reset.
   if(!error)
   {
+    unsigned int len = 0;
     sendUartString(p_uart, "ZEBBS: Load Started");
-    for(;;)
+    
+    do
     {
-      unsigned int len = 0;
-
       error = pf_read(p_buf, 512, &len);
       
       if(error)
@@ -63,12 +63,10 @@ int main()
       p_buf += len;
       
       //finished read
-      if(len < 512) 
-      {
-        sendUartString(p_uart, "ZEBBS: Load Completed");
-        break;
-      }
+      if(len < 512)  sendUartString(p_uart, "ZEBBS: Load Completed");
     }
+    while(len >= 512);
+    
   }
   
   sendUartString(p_uart, "ZEBBS: Executing Jump");

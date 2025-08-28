@@ -106,3 +106,91 @@ int recvUartString(struct s_uart *p_uart, char *p_string, int len)
 
   return index;
 }
+
+// check if rx fifo is full
+int getUartRxFifoFull(struct s_uart *p_uart)
+{
+  if(!p_uart) return -1;
+  
+  return p_uart->status.bits.rx_fifo_full;
+}
+
+// check if rx fifo has valid data
+int getUartRxFifoValid(struct s_uart *p_uart)
+{
+  if(!p_uart) return -1;
+  
+  return p_uart->status.bits.rx_fifo_valid;
+}
+
+// check if TX fifo is empty
+int getUartTxFifoEmpty(struct s_uart *p_uart)
+{
+  if(!p_uart) return -1;
+  
+  return p_uart->status.bits.tx_fifo_empty;
+}
+
+// check if tx fifo is full
+int getUartTxFifoFull(struct s_uart *p_uart)
+{
+  if(!p_uart) return -1;
+  
+  return p_uart->status.bits.tx_fifo_full;
+}
+
+// check if interrupt is enabled
+int getUartIrqEna(struct s_uart *p_uart)
+{
+  if(!p_uart) return -1;
+  
+  return p_uart->status.bits.intr_ena;
+}
+
+// check if there is an error
+int getUartError(struct s_uart *p_uart)
+{
+  int temp = 0;
+  
+  if(!p_uart) return -1;
+  
+  temp += p_uart->status.bits.overrun_err;      // 1, 0 for no error
+  temp += p_uart->status.bits.frame_err << 1;   // 2, 0 for no error
+  temp += p_uart->status.bits.parity_err << 2;  // 4, 0 for no error
+  
+  // 7 = all error, 5 = parity + overrun, 3 = frame + overrun, 6 = parity + frame
+  
+  return temp;
+}
+
+// reset tx fifo
+void setUartResetTXfifo(struct s_uart *p_uart)
+{
+  if(!p_uart) return;
+  
+  p_uart->control.bits.rst_tx_fifo = 1;
+}
+
+//reset rx fifo
+void setUartResetRXfifo(struct s_uart *p_uart)
+{
+  if(!p_uart) return;
+  
+  p_uart->control.bits.rst_rx_fifo = 1;
+}
+
+// enable uart interrupt generation
+void setUartIntrEna(struct s_uart *p_uart)
+{
+  if(!p_uart) return;
+  
+  p_uart->control.bits.ena_intr = 1;
+}
+
+// disable uart interrupt generation
+void unsetUartIntrEna(struct s_uart *p_uart)
+{
+  if(!p_uart) return;
+  
+  p_uart->control.bits.ena_intr = 0;
+}
