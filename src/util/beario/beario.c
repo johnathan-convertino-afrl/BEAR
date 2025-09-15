@@ -34,18 +34,65 @@
 
 #include "beario.h"
 
-struct s_uart *__gp_uart = initUart(UART_ADDR);
+#define TEMP_STR_MAX 1024
+
+struct s_uart volatile *__gp_uart = initUart(UART_ADDR);
 
 // emulates printf functionality
 int beario_printf(char *str_format, ...)
 {
+  int index;
+  int temp;
   
+  static char buffer[TEMP_STR_MAX];
+  va_list args;
+  
+  va_start(args, str_format);
+  
+  temp = vsnprintf(buffer, TEMP_STR_MAX, str_format, args);
+  
+  temp = (temp > TEMP_STR_MAX ? TEMP_STR_MAX : temp);
+  
+  for(index = 0; index < temp; index++)
+  {
+    beario_putchar((int)buffer[index]);
+  }
+  
+  va_end(args);
+  
+  return temp;
 }
 
 // emulates scanf functionality
 int beario_scanf(char *str_format, ...)
 {
+  int index = 0;
+  int temp;
   
+  static char buffer[TEMP_STR_MAX];
+  va_list args;
+  
+  va_start(args, str_format);
+  
+  do
+  {
+    buffer[index++] = (char)beario_getchar();
+    
+    if(index >= TEMP_STR_MAX)
+    {
+      index--;
+      break;
+    }
+  }
+  while(buffer[index] != '\n');
+  
+  buffer[index] = '\0';
+  
+  temp = vsscanf(buffer, str_format, args);
+  
+  va_end(args);
+  
+  return temp;
 }
 
 // emulate putchar

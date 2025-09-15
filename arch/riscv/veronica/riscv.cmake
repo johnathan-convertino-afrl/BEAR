@@ -11,7 +11,7 @@ set(XILINX_DRV_GPIO ON)
 set(BUILD_UTIL_FATFS ON)
 set(BUILD_UTIL_SDCARD_SPI ON)
 
-set(DRIVER_LIST bare_metal_startup bare_metal_base irq uart_drv gpio_drv spi_drv clint_drv plic_drv sdcard_spi_util fatfs_util)
+set(DRIVER_LIST bare_metal_startup bare_metal_base irq uart_drv gpio_drv spi_drv clint_drv plic_drv sdcard_spi_util fatfs_util beario_util)
 
 # Look for GCC in path
 # https://xpack.github.io/riscv-none-embed-gcc/

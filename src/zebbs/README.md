@@ -1,12 +1,15 @@
-# Example Applications
+# Zebbs (Zerostage Embedded Boot Buddy System)
+## Zerostage bootloader that will read apps or uboot into memory for first stage boot or baremetal execution.
 
-Source code for FPGA baremetal examples
+---
 
 author: Jay Convertino  
 
-date: 2025.07.17
+date: 2025.09.15
 
 license: MIT
+
+---
 
 ## Release Versions
 ### Current
@@ -16,8 +19,4 @@ license: MIT
   - none
   
 ## Info
-  - led_gpio_timer_irq.c  - Turn a LED on and off every second using GPIO driver.
-  - pmp_write_lock_read.c - Turn on PMP protection and attempt a write to the region in machine mode.
-  - sdcard_dir_list.c     - Print a list of files on a FAT16/32 sdcard over UART.
-  - uart_echo_irq.c       - Use an IRQ to echo back received uart data.
-  - uart_echo.c           - Use polling to echo bakc received uart data.
+  First check for u-boot.bin, if this fails, move to app.bin. If this fails then just jump to the app address regardless.

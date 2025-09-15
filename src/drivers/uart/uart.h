@@ -158,13 +158,6 @@ void setUartResetTXfifo(struct s_uart *p_uart);
 void setUartResetRXfifo(struct s_uart *p_uart);
 
 /*********************************************//**
-  * @brief reset rx fifo
-  * 
-  * @param p_uart pre initialized struct from initUart
-  *************************************************/
-void setUartResetRXfifo(struct s_uart *p_uart);
-
-/*********************************************//**
   * @brief enable uart interrupt generation
   * 
   * @param p_uart pre initialized struct from initUart

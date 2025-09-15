@@ -1,12 +1,15 @@
 # Example Applications
+## Source code for FPGA baremetal example apps
 
-Source code for FPGA baremetal example apps
+---
 
 author: Jay Convertino  
 
-date: 2025.07.17
+date: 2025.07.17  
 
-license: MIT
+license: MIT  
+
+---
 
 ## Release Versions
 ### Current

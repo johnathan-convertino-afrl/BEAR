@@ -1,11 +1,14 @@
-# RISCV PLIC Driver
+# Baremetal RISCV PLIC Driver
+## SiFive E31 mapping
 
 ---
+
 author: Jay Convertino  
 
 date: 2025.07.17  
 
 license: MIT  
+
 ---
 
 ## Release Versions
@@ -21,3 +24,6 @@ license: MIT
   Based on the SiFive E31 core complex manual 21G1.01.00
   
   Per the above manual this core provides 127 external intterupts with 7 priority levels.
+  
+### Provides
+  - initPlic ... Initializes plic structure and device

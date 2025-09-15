@@ -1,6 +1,27 @@
-Original source of these files is:
-https://github.com/five-embeddev/riscv-scratchpad
+# BEARIO
+## Baremetal C functions for IO (printf/scanf)
+---
 
-Altered to fit Veronica Vexriscv
+author: Jay Convertino  
 
-Removed supervisior stuffs.
+date: 2025.09.15  
+
+license: MIT  
+
+---
+
+## Release Versions
+### Current
+  - v0.0.0
+
+### Past
+  - none
+
+## Info
+  Functions to add standard functionality of to the BEAR environment.
+
+## Provides
+  - beario_printf
+  - beario_scanf
+  - beario_putchar
+  - beario_getchar
