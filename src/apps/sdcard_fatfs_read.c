@@ -1,6 +1,6 @@
 #include <base.h>
 
-#include <uart.h>
+#include <beario/beario.h>
 #include <pff3a/diskio.h>
 
 #include <stdint.h>
@@ -16,24 +16,24 @@ int main()
   
   struct s_uart *p_uart = initUart(UART_ADDR);
   
-  sendUartString(p_uart, "MOUNT DRIVE\n");
+  beario_printf("MOUNT DRIVE\n");
   
   error = pf_mount(&file_sys);
   
   if(error)
   {
-    sendUartString(p_uart, "MOUNT FAILED\n");
+    beario_printf("MOUNT FAILED\n");
     
     return 0;
   }
   
-  sendUartString(p_uart, "OPEN TEXT\n");
+  beario_printf("OPEN TEXT\n");
   
   error = pf_open("input.txt");
   
   if(error)
   {
-    sendUartString(p_uart, "FILE OPEN FAILED\n");
+    beario_printf("FILE OPEN FAILED\n");
     return 0;
   }
 
@@ -49,7 +49,7 @@ int main()
     
     if(error)
     {
-      sendUartString(p_uart, "FAILED TO READ FILE\n");
+      beario_printf("FAILED TO READ FILE\n");
       continue;
     }
     
@@ -57,7 +57,7 @@ int main()
     {
       if(index_char%64 == 0)
       {
-        sendUartString(p_uart, "\r");
+        beario_printf("\r");
       }
       
       while(p_uart->status.bits.tx_fifo_full);
@@ -67,7 +67,7 @@ int main()
     
     if(len < 512)
     {
-      sendUartString(p_uart, "\n\rFINISHED READING FILE\n");
+      beario_printf("\n\rFINISHED READING FILE\n");
       return 0;
     }
   }

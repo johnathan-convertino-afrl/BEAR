@@ -1,7 +1,7 @@
 #include <base.h>
 
-#include <uart.h>
 #include <pff3a/diskio.h>
+#include <beario/beario.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -19,15 +19,13 @@ int main()
   
   FATFS file_sys;
   
-  struct s_uart *p_uart = initUart(UART_ADDR);
-  
-  sendUartString(p_uart, "ZEBBS: Starting");
+  beario_printf("\nZEBBS: Starting");
   
   error = pf_mount(&file_sys);
   
   if(error)
   {
-    sendUartString(p_uart, "ZEBBS: SDCARD MOUNT FAILED");
+    beario_printf("ZEBBS: SDCARD MOUNT FAILED");
     
     return 0;
   }
@@ -40,7 +38,7 @@ int main()
   }
   while(index > 0);
   
-  if(error) sendUartString(p_uart, "ZEBBS: FAILED TO READ BINARY");
+  if(error) beario_printf("ZEBBS: FAILED TO READ BINARY");
   
   p_buf = (uint8_t *)(index ? UBOOT_START : DDR_ADDR);
 
@@ -48,7 +46,7 @@ int main()
   if(!error)
   {
     unsigned int len = 0;
-    sendUartString(p_uart, "ZEBBS: Load Started");
+    beario_printf("ZEBBS: Load Started");
     
     do
     {
@@ -56,20 +54,20 @@ int main()
       
       if(error)
       {
-        sendUartString(p_uart, "ZEBBS: FAILED TO READ FILE");
+        beario_printf("ZEBBS: FAILED TO READ FILE");
         continue;
       }
       
       p_buf += len;
       
       //finished read
-      if(len < 512)  sendUartString(p_uart, "ZEBBS: Load Completed");
+      if(len < 512)  beario_printf( "ZEBBS: Load Completed");
     }
     while(len >= 512);
     
   }
   
-  sendUartString(p_uart, "ZEBBS: Executing Jump");
+  beario_printf("ZEBBS: Executing Jump");
   
   if(index)
   {

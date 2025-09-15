@@ -4,8 +4,8 @@
 #include <gpio.h>
 #include <plic.h>
 #include <clint.h>
-#include <uart.h>
 #include <irq/vector-table.h>
+#include <beario/beario.h>
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -16,7 +16,6 @@ const char g_message[] = "LED EXAMPLE TIMER IRQ";
 struct s_plic   *gp_plic;
 struct s_clint  *gp_clint;
 struct s_gpio   *gp_gpio;
-struct s_uart   *gp_uart;
 
 static volatile uint64_t ecall_count = 0;
 
@@ -29,7 +28,6 @@ static volatile uint64_t seconds = 0;
 
 int main()
 {
-  gp_uart  = initUart(UART_ADDR);
   gp_gpio  = initGpio(GPIO_ADDR);
   gp_plic  = initPlic(PLIC_ADDR);
   gp_clint = initClint(CLINT_ADDR);
@@ -68,7 +66,7 @@ void riscv_mtvec_mti(void)
 
   setClintMTimeCmpOffset(gp_clint, calcMtimecmpSeconds(CPU_FREQ_HZ, 1));
 
-  sendUartString(gp_uart, g_message);
+  beario_printf(g_message);
 }
 // The 'riscv_mtvec_exception' function is added to the vector table by the vector_table.c
 // This function looks at the cause of the exception, if it is an 'ecall' instruction then increment a global counter.

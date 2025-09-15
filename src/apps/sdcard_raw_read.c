@@ -1,7 +1,7 @@
 #include <base.h>
 
-#include <uart.h>
-#include <sdcard_spi.h>
+#include <beario/beario.h>
+#include <sdcard_spi/sdcard_spi.h>
 
 #include <stdint.h>
 
@@ -14,13 +14,11 @@ int main()
   
   struct s_sdcard_spi sdcard_spi;
   
-  struct s_uart *p_uart = initUart(UART_ADDR);
-  
   error = initSdcardSpi(&sdcard_spi, SPI_ADDR, 0);
   
-  sendUartString(p_uart, "\n\r");
+  beario_printf("\n\r");
 
-  sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
+  beario_printf("RAW READ STATUS %s\n", getSdcardSpiStateString(&sdcard_spi));
 
   for(;;)
   {
@@ -28,7 +26,7 @@ int main()
     
     __delay_ms(2);
     
-    sendUartString(p_uart, "Starting read..\n");
+    beario_printf("Starting read..\n");
     
     // read 256 KiB of SD CARD data.
     for(index = 0; index < 512; index++)
@@ -37,7 +35,7 @@ int main()
       
       if(error)
       {
-        sendUartString(p_uart, getSdcardSpiStateString(&sdcard_spi));
+        beario_printf("RAW READ ERROR: %s\n", getSdcardSpiStateString(&sdcard_spi));
         
         continue;
       }
@@ -48,12 +46,12 @@ int main()
         
         if(index_char%80 == 0)
         {
-          sendUartString(p_uart, "\r");
+          beario_putchar('\r');
         }
         
         while(p_uart->status.bits.tx_fifo_full);
         
-        setUartTxData(p_uart, r_buf[index_char]);
+        beario_putchar(p_uart, r_buf[index_char]);
       }
     }
   }
