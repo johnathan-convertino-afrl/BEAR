@@ -13,9 +13,13 @@ include_directories(
 )
 
 set(BEARIO_UTIL_SRCS
-  beario.c
+  src/beario.c
   beario.h
 )
+
+if(BEARIO_UART)
+  list(APPEND BEARIO_UTIL_SRCS src/stdout/beario_uart.c)
+endif()
 
 add_library(beario_util ${BEARIO_UTIL_SRCS})
 target_link_libraries(beario_util PUBLIC uart_drv)

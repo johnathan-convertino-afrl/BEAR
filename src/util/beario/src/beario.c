@@ -35,13 +35,10 @@
 // #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <uart.h>
 
 #include "beario.h"
 
 #define TEMP_STR_MAX 1024
-
-static struct s_uart *__gp_uart = (struct s_uart *)UART_ADDR;
 
 // emulates printf functionality
 int beario_printf(char *str_format, ...)
@@ -148,24 +145,6 @@ int beario_scanf(char *str_format, ...)
   va_end(args);
   
   return temp;
-}
-
-// emulate putchar
-int beario_putchar(int chr)
-{
-  while(getUartTxFifoFull(__gp_uart));
-  
-  setUartTxData(__gp_uart, (uint8_t) chr);
-  
-  return chr;
-}
-
-//emulate getchar
-int beario_getchar()
-{
-  while(!getUartRxFifoValid(__gp_uart));
-  
-  return getUartRxData(__gp_uart);
 }
 
 
