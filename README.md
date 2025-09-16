@@ -1,6 +1,6 @@
-# BEAR, RISCV baremetal example apps and zero stage bootloader (zebbs)
-## Currently a RISCV32 only C based set of libraries for baremetal examples. Designed to target multiple architectures in the future.
-### Baremetal Examples and Apps for RiscV
+# BEAR
+## Baremetal Examples and Apps for RISCV
+### Currently a RISCV32 only C based set of libraries for baremetal examples and zerostage bootloader. Designed to target multiple architectures in the future.
 ---
 
 author: Jay Convertino  
@@ -34,7 +34,7 @@ license: MIT
   4. make
 
 ## Cmake options
-  All applications are build OR the zero stage bootloader is built.
+  All applications are build OR the zero stage bootloader is built. The -DBOOTLOADER option will only build the zerostage bootloader (ZEBBS). Without it all apps will build WITHOUT the bootloader.
   
   - cmake ../  -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
   - cmake ../  -DBOOTLOADER=ON -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
