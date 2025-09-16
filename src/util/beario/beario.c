@@ -29,14 +29,19 @@
   * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
   * IN THE SOFTWARE.
   *****************************************************************************/
-
-#include <stdint.h>
+#include <base.h>
+  
+#include <stdlib.h>
+// #include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <uart.h>
 
 #include "beario.h"
 
 #define TEMP_STR_MAX 1024
 
-struct s_uart volatile *__gp_uart = initUart(UART_ADDR);
+static struct s_uart *__gp_uart = (struct s_uart *)UART_ADDR;
 
 // emulates printf functionality
 int beario_printf(char *str_format, ...)

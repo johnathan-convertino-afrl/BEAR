@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.14)
 add_subdirectory(drivers)
 add_subdirectory(util)
 
-if(BUILD_BOOT_LOADER)
+if(BOOTLOADER)
   add_subdirectory(zebbs)
 else()
   add_subdirectory(apps)

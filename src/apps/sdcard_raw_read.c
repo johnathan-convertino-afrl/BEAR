@@ -42,16 +42,14 @@ int main()
       
       for(index_char = 0; index_char < 512; index_char++)
       {
-        if(index_char == 0) sendUartString(p_uart, "\r");
+        if(index_char == 0) beario_putchar('\r');
         
         if(index_char%80 == 0)
         {
           beario_putchar('\r');
         }
         
-        while(p_uart->status.bits.tx_fifo_full);
-        
-        beario_putchar(p_uart, r_buf[index_char]);
+        beario_putchar(r_buf[index_char]);
       }
     }
   }

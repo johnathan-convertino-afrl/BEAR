@@ -14,8 +14,6 @@ int main()
   
   FATFS file_sys;
   
-  struct s_uart *p_uart = initUart(UART_ADDR);
-  
   beario_printf("MOUNT DRIVE\n");
   
   error = pf_mount(&file_sys);
@@ -60,9 +58,8 @@ int main()
         beario_printf("\r");
       }
       
-      while(p_uart->status.bits.tx_fifo_full);
       
-      setUartTxData(p_uart, r_buf[index_char]);
+      beario_putchar(r_buf[index_char]);
     }
     
     if(len < 512)

@@ -1,7 +1,7 @@
 #include <base.h>
 
 #include <pff3a/diskio.h>
-#include <beario/beario.h>
+#include <uart.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -17,15 +17,17 @@ int main()
   
   char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "u-boot-spl.bin"};
   
+  struct s_uart *p_uart = initUart(UART_ADDR);
+  
   FATFS file_sys;
   
-  beario_printf("\nZEBBS: Starting");
+  sendUartString(p_uart, "\nZEBBS: Starting");
   
   error = pf_mount(&file_sys);
   
   if(error)
   {
-    beario_printf("ZEBBS: SDCARD MOUNT FAILED");
+    sendUartString(p_uart, "ZEBBS: SDCARD MOUNT FAILED");
     
     return 0;
   }
@@ -38,7 +40,7 @@ int main()
   }
   while(index > 0);
   
-  if(error) beario_printf("ZEBBS: FAILED TO READ BINARY");
+  if(error) sendUartString(p_uart, "ZEBBS: FAILED TO READ BINARY");
   
   p_buf = (uint8_t *)(index ? UBOOT_START : DDR_ADDR);
 
@@ -46,7 +48,7 @@ int main()
   if(!error)
   {
     unsigned int len = 0;
-    beario_printf("ZEBBS: Load Started");
+    sendUartString(p_uart, "ZEBBS: Load Started");
     
     do
     {
@@ -54,20 +56,20 @@ int main()
       
       if(error)
       {
-        beario_printf("ZEBBS: FAILED TO READ FILE");
+        sendUartString(p_uart, "ZEBBS: FAILED TO READ FILE");
         continue;
       }
       
       p_buf += len;
       
       //finished read
-      if(len < 512)  beario_printf( "ZEBBS: Load Completed");
+      if(len < 512)  sendUartString(p_uart,  "ZEBBS: Load Completed");
     }
     while(len >= 512);
     
   }
   
-  beario_printf("ZEBBS: Executing Jump");
+  sendUartString(p_uart, "ZEBBS: Executing Jump");
   
   if(index)
   {

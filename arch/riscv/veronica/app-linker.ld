@@ -11,8 +11,9 @@ ENTRY(_enter)
 
 MEMORY
 {
-    ram (arw!xi) : ORIGIN = 0x80002000, LENGTH = 8k
-    rom (irx!wa) : ORIGIN = 0x80000000, LENGTH = 8k
+    itim (airwx) : ORIGIN = 0x80080000, LENGTH = 1k
+    ram (arw!xi) : ORIGIN = 0x80040000, LENGTH = 256k
+    rom (irx!wa) : ORIGIN = 0x80000000, LENGTH = 256k
 }
 
 PHDRS
@@ -21,7 +22,7 @@ PHDRS
     ram_init PT_LOAD;
     tls PT_TLS;
     ram PT_LOAD;
-    ram_init PT_LOAD;
+    itim_init PT_LOAD;
     text PT_LOAD;
     lim_init PT_LOAD;
 }
@@ -76,10 +77,10 @@ SECTIONS
     PROVIDE(__metal_eccscrub_bit = 0);
 
     /* The RAM memories map for ECC scrubbing */
-    PROVIDE( metal_dtim_0_memory_start = 0x80002000 );
-    PROVIDE( metal_dtim_0_memory_end = 0x80002000 + 0x4000 );
-    PROVIDE( metal_ram_0_memory_start = 0x80002000 );
-    PROVIDE( metal_ram_0_memory_end = 0x80002000 + 0x2000 );
+    PROVIDE( metal_dtim_0_memory_start = 0x80040000 );
+    PROVIDE( metal_dtim_0_memory_end = 0x80040000 + 0x40000 );
+    PROVIDE( metal_itim_0_memory_start = 0x80080000 );
+    PROVIDE( metal_itim_0_memory_end = 0x80080000 + 0x400 );
 
     /* ROM SECTION
      *
@@ -88,7 +89,7 @@ SECTIONS
      * execution.
      */
 
-    .init : {
+    .init (READONLY) : {
         /* The _enter symbol is placed in the .text.metal.init.enter section
          * and must be placed at the beginning of the program */
         KEEP (*(.text.metal.init.enter))
@@ -97,17 +98,17 @@ SECTIONS
         KEEP (*(.text.libgloss.start))
     } >rom :rom
 
-    .fini : {
+    .fini (READONLY) : {
         KEEP (*(SORT_NONE(.fini)))
     } >rom :rom
 
-    .preinit_array : ALIGN(8) {
+    .preinit_array (READONLY) : ALIGN(8) {
         PROVIDE_HIDDEN (__preinit_array_start = .);
         KEEP (*(.preinit_array))
         PROVIDE_HIDDEN (__preinit_array_end = .);
     } >rom :rom
 
-    .init_array : ALIGN(8) {
+    .init_array (READONLY) : ALIGN(8) {
         PROVIDE_HIDDEN (__init_array_start = .);
         KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
         KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
@@ -118,7 +119,7 @@ SECTIONS
         PROVIDE_HIDDEN ( metal_constructors_end = .);
     } >rom :rom
 
-    .fini_array : ALIGN(8) {
+    .fini_array (READONLY) : ALIGN(8) {
         PROVIDE_HIDDEN (__fini_array_start = .);
         KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
         KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
@@ -131,7 +132,7 @@ SECTIONS
 
  
 
-    .ctors : {
+    .ctors (READONLY) : {
         KEEP (*crtbegin.o(.ctors))
         KEEP (*crtbegin?.o(.ctors))
         KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
@@ -140,7 +141,7 @@ SECTIONS
         KEEP (*(.metal.ctors .metal.ctors.*))
     } >rom :rom
 
-    .dtors : {
+    .dtors (READONLY) : {
         KEEP (*crtbegin.o(.dtors))
         KEEP (*crtbegin?.o(.dtors))
         KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
@@ -149,7 +150,7 @@ SECTIONS
         KEEP (*(.metal.dtors .metal.dtors.*))
     } >rom : rom
 
-    .rodata : {
+    .rodata (READONLY) : {
         *(.rdata)
         *(.rodata .rodata.*)
         *(.gnu.linkonce.r.*)
@@ -163,21 +164,21 @@ SECTIONS
 
     /* ITIM SECTION
      *
-     * The following sections contain data which is copied fram read-only
+     * The following sections contain data which is copied from read-only
      * memory into an instruction tightly-integrated memory (ITIM), if one
      * is present in the design, during pre-main program initialization.
      *
      * Generally, the data copied into the ITIM should be performance-critical
-     * functions which benefit fram low instruction-fetch latency.
+     * functions which benefit from low instruction-fetch latency.
      */
 
-    .ram : ALIGN(8) {
-        *(.ram .ram.*)
-    } >ram AT>rom :ram_init
+    .itim : ALIGN(8) {
+        *(.itim .itim.*)
+    } >itim AT>rom :itim_init
 
-    PROVIDE( metal_segment_ram_source_start = LOADADDR(.ram) );
-    PROVIDE( metal_segment_ram_target_start = ADDR(.ram) );
-    PROVIDE( metal_segment_ram_target_end = ADDR(.ram) + SIZEOF(.ram) );
+    PROVIDE( metal_segment_itim_source_start = LOADADDR(.itim) );
+    PROVIDE( metal_segment_itim_target_start = ADDR(.itim) );
+    PROVIDE( metal_segment_itim_target_end = ADDR(.itim) + SIZEOF(.itim) );
 
     /* LIM SECTION
      *

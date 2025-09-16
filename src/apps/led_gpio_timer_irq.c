@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 
-const char g_message[] = "LED EXAMPLE TIMER IRQ";
+char g_message[] = "LED EXAMPLE TIMER IRQ";
 
 struct s_plic   *gp_plic;
 struct s_clint  *gp_clint;

@@ -37,4 +37,4 @@ license: MIT
   All applications are build OR the zero stage bootloader is built.
   
   - cmake ../  -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
-  - cmake ../  -DBOOT_LOADER=ON -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
+  - cmake ../  -DBOOTLOADER=ON -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake

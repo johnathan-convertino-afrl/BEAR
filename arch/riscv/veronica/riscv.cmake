@@ -60,10 +60,10 @@ set( CMAKE_SYSTEM_NAME          Generic )
 set( CMAKE_SYSTEM_PROCESSOR     rv32imac_zicsr )
 set( CMAKE_EXECUTABLE_SUFFIX    ".elf")
 
-if(BUILD_BOOT_LOADER)
+if(BOOTLOADER)
   set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/zebbs-linker.ld")
 else()
-  set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/apps-linker.ld")
+  set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/app-linker.ld")
 endif()
 
 # specify the cross compiler. We force the compiler so that CMake doesn't
