@@ -64,7 +64,7 @@ set( CMAKE_EXECUTABLE_SUFFIX    ".elf")
 if(BOOTLOADER)
   set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/zebbs-linker.ld")
 else()
-  set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/app-linker.ld")
+  set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/riscv/veronica/apps-linker.ld")
 endif()
 
 # specify the cross compiler. We force the compiler so that CMake doesn't
