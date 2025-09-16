@@ -19,4 +19,4 @@ set(FATFS_UTIL_SRCS
 )
 
 add_library(fatfs_util ${FATFS_UTIL_SRCS})
-target_link_libraries(fatfs_util PUBLIC sdcard_spi_util)
+target_link_libraries(fatfs_util PUBLIC sdcard_spi_util beario_util)

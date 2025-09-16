@@ -5,7 +5,7 @@
 #include <base.h>
 
 #include <sdcard_spi/sdcard_spi.h>
-// #include <beario/beario.h>
+#include <beario/beario.h>
 
 #include "diskio.h"
 
@@ -21,7 +21,7 @@ DSTATUS disk_initialize (void)
 
   status = initSdcardSpi(&g_sdcard_spi, SPI_ADDR, 0);
   
-  // if(status) beario_printf("PFF INIT ERROR: %s\n", getSdcardSpiStateString(&g_sdcard_spi));
+  if(status) beario_stronly_printf("PFF INIT ERROR: %s\n", getSdcardSpiStateString(&g_sdcard_spi));
   
   return status;
 }
@@ -49,7 +49,7 @@ DRESULT disk_readp (
 
   res = readSdcardSpi(&g_sdcard_spi, sector, buff, offset, count);
   
-  // if(res) beario_printf("PFF READ ERROR: %s\n", getSdcardSpiStateString(&g_sdcard_spi));
+  if(res) beario_stronly_printf("PFF READ ERROR: %s\n", getSdcardSpiStateString(&g_sdcard_spi));
 
   return res;
 }
@@ -85,7 +85,7 @@ DRESULT disk_writep (
     res = writeSdcardSpi(&g_sdcard_spi, sector, (uint8_t *)buff, sc);
   }
   
-  // if(res) beario_printf("PFF WRITE ERROR: %s\n", getSdcardSpiStateString(&g_sdcard_spi));
+  if(res) beario_stronly_printf("PFF WRITE ERROR: %s\n", getSdcardSpiStateString(&g_sdcard_spi));
 
   return res;
 }

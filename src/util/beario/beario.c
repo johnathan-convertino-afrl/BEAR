@@ -68,6 +68,56 @@ int beario_printf(char *str_format, ...)
   return temp;
 }
 
+// emulates printf for strings only
+int beario_stronly_printf(char *str_format, ...)
+{
+  char str_char;
+  int index = 0;
+
+  va_list args;
+  
+  va_start(args, str_format);
+  
+  str_char = *str_format;
+  
+  while(str_char)
+  {
+    index++;
+    char *p_next_str_char = str_format++;
+    char *p_temp;
+    
+    switch(str_char)
+    {
+      case '%':
+        if(*p_next_str_char == 's')
+        {
+          p_temp = (char *)(va_arg(args, char *));
+          
+          while(p_temp)
+          {
+            beario_putchar(*p_temp);
+            
+            p_temp++;
+          }
+        }
+        else
+        {
+          p_next_str_char = p_next_str_char++;
+        }
+        break;
+      default:
+        beario_putchar(str_char);
+        break;
+    }
+    
+    str_char = *p_next_str_char;
+  }
+  
+  va_end(args);
+  
+  return index;
+}
+
 // emulates scanf functionality
 int beario_scanf(char *str_format, ...)
 {

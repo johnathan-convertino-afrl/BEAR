@@ -50,6 +50,17 @@ extern "C" {
 int beario_printf(char *str_format, ...);
 
 /*********************************************//**
+  * @brief emulates printf functionality for strings only
+  * 
+  * @param str_format same as the printf format line
+  * @param ... Variable parameter, s (lower case) for 
+  *            string is the only one accepted.
+  * 
+  * @return Number of characters, or a negative value on error.
+  *************************************************/
+int beario_stronly_printf(char *str_format, ...);
+
+/*********************************************//**
   * @brief emulates scanf functionality
   *
   * @param str_format same as the scanf format line
