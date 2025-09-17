@@ -45,7 +45,7 @@ int beario_printf(char *str_format, ...)
   int index;
   int temp;
   
-  static char buffer[TEMP_STR_MAX];
+  char buffer[TEMP_STR_MAX];
   va_list args;
   
   va_start(args, str_format);
@@ -56,7 +56,7 @@ int beario_printf(char *str_format, ...)
   
   for(index = 0; index < temp; index++)
   {
-    beario_putchar((int)buffer[index]);
+    beario_putchar(buffer[index]);
   }
   
   va_end(args);
@@ -87,9 +87,9 @@ int beario_stronly_printf(char *str_format, ...)
       case '%':
         if(*p_next_str_char == 's')
         {
-          p_temp = (char *)(va_arg(args, char *));
+          p_temp = (va_arg(args, char *));
           
-          while(p_temp)
+          while(*p_temp)
           {
             beario_putchar(*p_temp);
             
@@ -97,7 +97,7 @@ int beario_stronly_printf(char *str_format, ...)
           }
         }
 
-        p_next_str_char = ++p_next_str_char;
+        p_next_str_char = ++str_format;
         
         break;
       default:

@@ -20,7 +20,7 @@ int main()
   
   if(error)
   {
-    beario_printf("MOUNT FAILED\n\r");
+    beario_printf("MOUNT FAILED, %d\n\r", error);
     
     return 0;
   }
@@ -31,7 +31,7 @@ int main()
   
   if(error)
   {
-    beario_printf("FILE OPEN FAILED\n\r");
+    beario_printf("FILE OPEN FAILED, %d\n\r", error);
     return 0;
   }
 
@@ -47,7 +47,7 @@ int main()
     
     if(error)
     {
-      beario_printf("FAILED TO READ FILE\n\r");
+      beario_printf("FAILED TO READ FILE, %d\n\r", error);
       continue;
     }
     
