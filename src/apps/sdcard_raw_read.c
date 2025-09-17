@@ -18,7 +18,7 @@ int main()
   
   beario_printf("\n\r");
 
-  beario_printf("RAW READ STATUS %s\n", getSdcardSpiStateString(&sdcard_spi));
+  beario_printf("RAW READ STATUS %s\n\r", getSdcardSpiStateString(&sdcard_spi));
 
   for(;;)
   {
@@ -26,7 +26,7 @@ int main()
     
     __delay_ms(2);
     
-    beario_printf("Starting read..\n");
+    beario_printf("Starting read..\n\r");
     
     // read 256 KiB of SD CARD data.
     for(index = 0; index < 512; index++)
@@ -35,18 +35,18 @@ int main()
       
       if(error)
       {
-        beario_printf("RAW READ ERROR: %s\n", getSdcardSpiStateString(&sdcard_spi));
+        beario_printf("RAW READ ERROR: %s\n\rn", getSdcardSpiStateString(&sdcard_spi));
         
         continue;
       }
       
       for(index_char = 0; index_char < 512; index_char++)
       {
-        if(index_char == 0) beario_putchar('\r');
+        if(index_char == 0) beario_printf("\n\r");
         
         if(index_char%80 == 0)
         {
-          beario_putchar('\r');
+          beario_printf("\n\r");
         }
         
         beario_putchar(r_buf[index_char]);

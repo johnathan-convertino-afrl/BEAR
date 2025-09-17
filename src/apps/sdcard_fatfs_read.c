@@ -14,24 +14,24 @@ int main()
   
   FATFS file_sys;
   
-  beario_printf("MOUNT DRIVE\n");
+  beario_printf("\n\rMOUNT DRIVE\n\r");
   
   error = pf_mount(&file_sys);
   
   if(error)
   {
-    beario_printf("MOUNT FAILED\n");
+    beario_printf("MOUNT FAILED\n\r");
     
     return 0;
   }
   
-  beario_printf("OPEN TEXT\n");
+  beario_printf("OPEN TEXT\n\r");
   
   error = pf_open("input.txt");
   
   if(error)
   {
-    beario_printf("FILE OPEN FAILED\n");
+    beario_printf("FILE OPEN FAILED\n\r");
     return 0;
   }
 
@@ -47,7 +47,7 @@ int main()
     
     if(error)
     {
-      beario_printf("FAILED TO READ FILE\n");
+      beario_printf("FAILED TO READ FILE\n\r");
       continue;
     }
     
@@ -55,7 +55,7 @@ int main()
     {
       if(index_char%64 == 0)
       {
-        beario_printf("\r");
+        beario_printf("\n\r");
       }
       
       
@@ -64,7 +64,7 @@ int main()
     
     if(len < 512)
     {
-      beario_printf("\n\rFINISHED READING FILE\n");
+      beario_printf("\n\rFINISHED READING FILE\n\r");
       return 0;
     }
   }

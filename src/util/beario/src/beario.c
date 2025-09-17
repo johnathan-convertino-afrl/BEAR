@@ -32,7 +32,6 @@
 #include <base.h>
   
 #include <stdlib.h>
-// #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -80,7 +79,7 @@ int beario_stronly_printf(char *str_format, ...)
   while(str_char)
   {
     index++;
-    char *p_next_str_char = str_format++;
+    char *p_next_str_char = ++str_format;
     char *p_temp;
     
     switch(str_char)
@@ -97,10 +96,9 @@ int beario_stronly_printf(char *str_format, ...)
             p_temp++;
           }
         }
-        else
-        {
-          p_next_str_char = p_next_str_char++;
-        }
+
+        p_next_str_char = ++p_next_str_char;
+        
         break;
       default:
         beario_putchar(str_char);

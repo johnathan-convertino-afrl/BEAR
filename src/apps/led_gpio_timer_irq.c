@@ -10,9 +10,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-
-char g_message[] = "LED EXAMPLE TIMER IRQ";
-
 struct s_plic   *gp_plic;
 struct s_clint  *gp_clint;
 struct s_gpio   *gp_gpio;
@@ -66,7 +63,7 @@ void riscv_mtvec_mti(void)
 
   setClintMTimeCmpOffset(gp_clint, calcMtimecmpSeconds(CPU_FREQ_HZ, 1));
 
-  beario_printf(g_message);
+  beario_printf("\n\rLED EXAMPLE TIMER IRQ\n\r");
 }
 // The 'riscv_mtvec_exception' function is added to the vector table by the vector_table.c
 // This function looks at the cause of the exception, if it is an 'ecall' instruction then increment a global counter.
