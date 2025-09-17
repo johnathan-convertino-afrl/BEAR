@@ -18,7 +18,7 @@ set(BEARIO_UTIL_SRCS
 )
 
 if(BEARIO_UART)
-  list(APPEND BEARIO_UTIL_SRCS src/stdout/beario_uart.c)
+  list(APPEND BEARIO_UTIL_SRCS src/driver/beario_uart.c)
 endif()
 
 add_library(beario_util ${BEARIO_UTIL_SRCS})
