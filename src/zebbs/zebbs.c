@@ -51,7 +51,7 @@ int main()
   
   uint8_t *p_buf = NULL;
   
-  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "fw_payload.bin"};
+  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "payload.bin"};
   
   FATFS file_sys;
   
@@ -115,6 +115,8 @@ int main()
   {
     __asm__ volatile ("li t0, %0" : : "i" (DDR_ADDR) :);
   }
+  
+  __asm__ volatile ("csrr a0, 0");
   
   __asm__ volatile ("jalr zero, t0, 0");
   
