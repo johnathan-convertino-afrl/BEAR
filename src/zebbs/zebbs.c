@@ -51,7 +51,7 @@ int main()
   
   uint8_t *p_buf = NULL;
   
-  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "u-boot-spl.bin"};
+  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "fw_payload.bin"};
   
   FATFS file_sys;
   
@@ -78,7 +78,7 @@ int main()
   
   if(error) zebbs_printf("FAILED TO READ BINARY");
   
-  p_buf = (uint8_t *)(index ? UBOOT_START : DDR_ADDR);
+  p_buf = (uint8_t *)(index ? OPENSBI_START : DDR_ADDR);
 
   //if error index will be 0 and we will jump to ddr, this is so jtag loaded apps can be run after a reset.
   if(!error)
@@ -109,7 +109,7 @@ int main()
   
   if(index)
   {
-    __asm__ volatile ("li t0, %0" : : "i" (UBOOT_START) :);
+    __asm__ volatile ("li t0, %0" : : "i" (OPENSBI_START) :);
   }
   else
   {
