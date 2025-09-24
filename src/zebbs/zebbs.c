@@ -33,6 +33,7 @@
   *****************************************************************************/
 
 #include <base.h>
+#include <riscv-csr.h>
 
 #include <pff3a/diskio.h>
 #include <beario/beario.h>
@@ -78,7 +79,9 @@ int main()
   
   if(error) zebbs_printf("FAILED TO READ BINARY");
   
-  p_buf = (uint8_t *)(index ? OPENSBI_START : DDR_ADDR);
+  zebbs_printf(p_file_names[index]);
+  
+  p_buf = (uint8_t *)DDR_ADDR;
 
   //if error index will be 0 and we will jump to ddr, this is so jtag loaded apps can be run after a reset.
   if(!error)
@@ -107,18 +110,17 @@ int main()
   
   zebbs_printf("Executing Jump");
   
-  if(index)
-  {
-    __asm__ volatile ("li t0, %0" : : "i" (OPENSBI_START) :);
-  }
-  else
-  {
-    __asm__ volatile ("li t0, %0" : : "i" (DDR_ADDR) :);
-  }
+  __asm__ volatile ("li a0, 0");
   
-  __asm__ volatile ("csrr a0, 0");
+  __asm__ volatile ("la a2, _BAD_JUMP");
+
+  __asm__ volatile ("li t0, %0" : : "i" (DDR_ADDR) :);
   
   __asm__ volatile ("jalr zero, t0, 0");
+  
+  __asm__ volatile ("_BAD_JUMP:");
+  
+  zebbs_printf("JUMP FAILED");
   
   return 0;
 }
