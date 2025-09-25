@@ -42,8 +42,8 @@
 #define SD_FAST_FREQ_HZ         1000000
 #define SD_SLOW_FREQ_HZ         100000
 #define SD_INIT_WORD            0xFF
-#define SD_NCR_ATTEMPT          64
-#define SD_TOKEN_ATTEMPT        512
+#define SD_ATTEMPT_SLOW         (0.1 * SD_SLOW_FREQ_HZ)/8
+#define SD_ATTEMPT_FAST         (0.1 * SD_FAST_FREQ_HZ)/8
 #define SD_INIT_ATTEMPT         100
 #define SD_START_TOKEN          0xFE
 #define SD_DATA_ACCEPTED_TOKEN  0x05
@@ -137,7 +137,7 @@ static inline uint8_t recvRawData(struct s_spi *p_spi);
 // recv a response that is not all 0xFF (usually for R1)
 static inline uint8_t recvRespOneByte(struct s_spi *p_spi, uint32_t tries);
 // recv a response that is any length, first byte will use recvRespOneByte
-static inline void recvRespBytes(struct s_spi *p_spi, uint8_t *p_buff, const uint8_t num_bytes);
+static inline void recvRespBytes(struct s_spi *p_spi, uint8_t *p_buff, const uint8_t num_bytes, uint32_t tries);
 // wait for transmission to be over and delay for a bit to hold chip select high.
 static inline void waitForTrans(struct s_spi *p_spi, uint32_t len);
 
@@ -196,7 +196,7 @@ reinit:
     //send command 0 to reset card for SPI mode
     sendCommand(p_spi, SD_CMD0, SD_CMD_NULL_ARG, SD_CMD0_CRC);
     
-    sd_response[0] = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
+    sd_response[0] = recvRespOneByte(p_spi, SD_ATTEMPT_SLOW);
     
     clrSpiForceSelect(p_spi);
     
@@ -220,7 +220,7 @@ reinit:
   //send command 8 and check response
   sendCommand(p_spi, SD_CMD8, SD_CMD8_ARG, SD_CMD8_CRC);
   
-  recvRespBytes(p_spi, sd_response, 5);
+  recvRespBytes(p_spi, sd_response, 5, SD_ATTEMPT_SLOW);
   
   p_sdcard_spi->last_r1 = sd_response[0];
   
@@ -260,7 +260,7 @@ reinit:
   //find out if voltage range is good.
   sendCommand(p_spi, SD_CMD58, SD_CMD_NULL_ARG, SD_CMD_NULL_CRC);
   
-  recvRespBytes(p_spi, sd_response, 5);
+  recvRespBytes(p_spi, sd_response, 5, SD_ATTEMPT_FAST);
   
   p_sdcard_spi->last_r1 = sd_response[0];
   
@@ -284,7 +284,7 @@ reinit:
     //command arg for version one cards does not set high capacity. version two attempts to set this.
     sendAppCommand(p_spi, SD_ACMD41, (p_sdcard_spi->state == INIT_V2 ? SD_ACMD41_ARG : SD_CMD_NULL_ARG), SD_CMD_NULL_CRC);
     
-    sd_response[0] = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
+    sd_response[0] = recvRespOneByte(p_spi, SD_ATTEMPT_SLOW);
     
     p_sdcard_spi->last_r1 = sd_response[0];
     
@@ -299,7 +299,7 @@ reinit:
     
       sendCommand(p_spi, SD_CMD0, SD_CMD_NULL_ARG, SD_CMD0_CRC);
       
-      sd_response[0] = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
+      sd_response[0] = recvRespOneByte(p_spi, SD_ATTEMPT_SLOW);
       
       clrSpiForceSelect(p_spi);
       
@@ -328,7 +328,7 @@ reinit:
   {
     sendCommand(p_spi, SD_CMD58, SD_CMD_NULL_ARG, SD_CMD_NULL_CRC);
     
-    recvRespBytes(p_spi, sd_response, 5);
+    recvRespBytes(p_spi, sd_response, 5, SD_ATTEMPT_FAST);
     
     p_sdcard_spi->last_r1 = sd_response[0];
     
@@ -356,7 +356,7 @@ reinit:
   {
     sendCommand(p_spi, SD_CMD16, SD_FIXED_BYTES, SD_CMD_NULL_CRC);
     
-    sd_response[0] = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
+    sd_response[0] = recvRespOneByte(p_spi, SD_ATTEMPT_FAST);
     
     p_sdcard_spi->last_r1 = sd_response[0];
     
@@ -405,7 +405,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   
   index_offset = offset;
   
-  waitForTrans(p_sdcard_spi->p_spi, 1);
+  waitForTrans(p_sdcard_spi->p_spi, 0);
   
   address = (p_sdcard_spi->v1 ? address * SD_FIXED_BYTES : address);
   
@@ -413,7 +413,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   
   sendCommand(p_sdcard_spi->p_spi, SD_CMD17, address, SD_CMD_NULL_CRC);
   
-  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_NCR_ATTEMPT);
+  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_ATTEMPT_SLOW);
   
   p_sdcard_spi->last_r1 = response;
   
@@ -426,7 +426,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
     return SD_ERROR_RETURN;
   }
   
-  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_TOKEN_ATTEMPT);
+  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_ATTEMPT_FAST);
   
   p_sdcard_spi->last_error_token = response;
   
@@ -482,7 +482,7 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
   
   sendCommand(p_sdcard_spi->p_spi, SD_CMD24, address, SD_CMD_NULL_CRC);
   
-  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_NCR_ATTEMPT);
+  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_ATTEMPT_FAST);
   
   p_sdcard_spi->last_r1 = response;
   
@@ -507,7 +507,7 @@ uint8_t writeSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint
     sendRawData(p_sdcard_spi->p_spi, 0x00);
   }
   
-  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_TOKEN_ATTEMPT);
+  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_ATTEMPT_FAST);
   
   p_sdcard_spi->last_error_token = response;
   
@@ -585,7 +585,7 @@ static inline void sendAppCommand(struct s_spi *p_spi, uint8_t acmd, uint32_t ar
   
   sendCommand(p_spi, SD_CMD55, SD_CMD_NULL_ARG, SD_CMD_NULL_CRC);
   
-  reponse = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
+  reponse = recvRespOneByte(p_spi, SD_ATTEMPT_FAST);
   //add a idle check? and return error?
   
   waitForTrans(p_spi, 0);
@@ -629,11 +629,11 @@ static inline uint8_t recvRespOneByte(struct s_spi *p_spi, uint32_t tries)
 }
 
 // recv a response that is any length, first byte will use recvRespOneByte
-static inline void recvRespBytes(struct s_spi *p_spi, uint8_t *p_buff, const uint8_t num_bytes)
+static inline void recvRespBytes(struct s_spi *p_spi, uint8_t *p_buff, const uint8_t num_bytes, uint32_t tries)
 {
   int index;
   
-  p_buff[0] = recvRespOneByte(p_spi, SD_NCR_ATTEMPT);
+  p_buff[0] = recvRespOneByte(p_spi, tries);
   
   if(p_buff[0] == SD_INIT_WORD) return;
   
