@@ -23,17 +23,15 @@ license: MIT
   This setup uses the fiveembedded gcc startup and other support files to create the baremetal system. I've simply intergrated
   them with my cmake setup and added examples.
   
-## Requirements (Ubuntu 24.04)
-
-## Recommended
+### Requirements (Ubuntu 24.04)
   
-## Building
+### Building example for Veronica
   1. mkdir build
   2. cd build
-  3. cmake ../
+  3. cmake ../ -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
   4. make
 
-## Cmake options
+### Cmake options
   All applications are build OR the zero stage bootloader is built. The -DBOOTLOADER option will only build the zerostage bootloader (ZEBBS). Without it all apps will build WITHOUT the bootloader.
   
   - cmake ../  -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
