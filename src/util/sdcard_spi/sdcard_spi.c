@@ -39,7 +39,7 @@
 #include "sdcard_spi.h"
 
 // MAGIC
-#define SD_FAST_FREQ_HZ         1000000
+#define SD_FAST_FREQ_HZ         10000000
 #define SD_SLOW_FREQ_HZ         100000
 #define SD_INIT_WORD            0xFF
 #define SD_ATTEMPT_SLOW         (0.1 * SD_SLOW_FREQ_HZ)/8
