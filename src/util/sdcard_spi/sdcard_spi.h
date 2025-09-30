@@ -67,7 +67,8 @@ struct s_sdcard_spi
     CMD16_FAIL,
     CMD58_FAIL,
     ACMD41_FAIL,
-    READ_FAIL,
+    READ_FAIL_TIMEOUT,
+    READ_FAIL_START,
     WRITE_FAIL,
     UNKNOWN_FAIL,
     NOT_READY

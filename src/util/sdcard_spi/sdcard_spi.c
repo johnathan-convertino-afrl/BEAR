@@ -39,12 +39,14 @@
 #include "sdcard_spi.h"
 
 // MAGIC
-#define SD_FAST_FREQ_HZ         10000000
+#define SD_FAST_FREQ_HZ         1000000
 #define SD_SLOW_FREQ_HZ         100000
 #define SD_INIT_WORD            0xFF
-#define SD_ATTEMPT_SLOW         (0.1 * SD_SLOW_FREQ_HZ)/8
-#define SD_ATTEMPT_FAST         (0.1 * SD_FAST_FREQ_HZ)/8
-#define SD_INIT_ATTEMPT         100
+#define SD_BITS_PER_TRANS       8
+#define SD_ATTEMPT_FACTOR       10
+#define SD_ATTEMPT_SLOW         (SD_SLOW_FREQ_HZ/(SD_BITS_PER_TRANS * SD_ATTEMPT_FACTOR))
+#define SD_ATTEMPT_FAST         (SD_FAST_FREQ_HZ/SD_BITS_PER_TRANS)
+#define SD_INIT_ATTEMPT         (SD_SLOW_FREQ_HZ/(SD_ATTEMPT_FACTOR*10))
 #define SD_START_TOKEN          0xFE
 #define SD_DATA_ACCEPTED_TOKEN  0x05
 #define SD_DATA_REJ_CRC_TOKEN   0x0B
@@ -119,7 +121,8 @@ char *c_MSG_STRINGS[] =
     "COMMAND 16, SET BLOCK LENGTH, FAILED",
     "COMMAND 58, READ OCR, FAILED",
     "APP COMMAND 41, SET HC MODE, FAILED",
-    "READ HAS FAILED",
+    "READ HAS FAILED, TIMEOUT",
+    "READ HAS FAILED, START",
     "WRITE HAS FAILED",
     "UKNOWN FAILURE",
     "NOT READY"
@@ -413,7 +416,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   
   sendCommand(p_sdcard_spi->p_spi, SD_CMD17, address, SD_CMD_NULL_CRC);
   
-  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_ATTEMPT_SLOW);
+  response = recvRespOneByte(p_sdcard_spi->p_spi, SD_ATTEMPT_FAST);
   
   p_sdcard_spi->last_r1 = response;
   
@@ -421,7 +424,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   {
     clrSpiForceSelect(p_sdcard_spi->p_spi);
     
-    p_sdcard_spi->state = READ_FAIL;
+    p_sdcard_spi->state = READ_FAIL_TIMEOUT;
     
     return SD_ERROR_RETURN;
   }
@@ -434,7 +437,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   {
     clrSpiForceSelect(p_sdcard_spi->p_spi);
     
-    p_sdcard_spi->state = READ_FAIL;
+    p_sdcard_spi->state = READ_FAIL_START;
     
     return SD_ERROR_RETURN;
   }
