@@ -27,12 +27,12 @@
 //BUS CLOCK FREQ, USED FOR CLINT CALC INLINE FUNCTIONS
 #define CPU_FREQ_HZ 50000000
 #define BUS_FREQ_HZ 50000000
-#define MS_DIVISOR  10000
-#define US_DIVISOR  5000000
+#define MS_DIVISOR  5000
+#define US_DIVISOR  2500000
 
 static inline void __delay(uint32_t len)
 {
-  uint32_t index = 0;
+  volatile uint32_t index = 0;
 
   for(index = 0; index < len; index++)
   {
@@ -43,7 +43,7 @@ static inline void __delay(uint32_t len)
 // rough approximations
 static inline void __delay_ms(uint32_t len)
 {
-  uint32_t index = 0;
+  volatile uint32_t index = 0;
   
   for(index = 0; index < len; index++)
   {
@@ -54,7 +54,7 @@ static inline void __delay_ms(uint32_t len)
 // rough approximations
 static inline void __delay_us(uint32_t len)
 {
-  uint32_t index = 0;
+  volatile uint32_t index = 0;
   
   for(index = 0; index < len; index++)
   {
