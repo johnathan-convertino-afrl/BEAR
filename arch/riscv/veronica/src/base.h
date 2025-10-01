@@ -22,7 +22,7 @@
 #define RAM_ADDR      0x08000000
 #define ITIM_ADDR     0x00800000
 #define ROM_ADDR      0x20010000
-#define OPENSBI_START DDR_ADDR // eventually would like to do this in BRAM using SPL (MUST BE OPENSBI START IF NOT SPL)
+#define UBOOT_START  (0x00400000 + DDR_ADDR) // eventually would like to do this in BRAM using SPL (MUST BE OPENSBI START IF NOT SPL)
 
 //BUS CLOCK FREQ, USED FOR CLINT CALC INLINE FUNCTIONS
 #define CPU_FREQ_HZ 50000000

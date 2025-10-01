@@ -41,18 +41,17 @@
 #include <stdint.h>
 #include <string.h>
 
-#define NUM_FILE_NAMES 2
+#define NUM_FILE_NAMES 3
 
+int zebbs_file_read(uint8_t *p_buf);
 void zebbs_printf(char *info_str);
 
 int main()
 {
   int index = NUM_FILE_NAMES;
   int error = 0;
-  
-  uint8_t *p_buf = NULL;
-  
-  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "payload.bin"};
+
+  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "u-boot.bin", "opensbi.bin"};
   
   FATFS file_sys;
   
@@ -81,30 +80,21 @@ int main()
   
   zebbs_printf(p_file_names[index]);
   
-  p_buf = (uint8_t *)DDR_ADDR;
-
   //if error index will be 0 and we will jump to ddr, this is so jtag loaded apps can be run after a reset.
   if(!error)
   {
-    unsigned int len = 0;
-    zebbs_printf("Load Started");
+    error = zebbs_file_read((uint8_t *)DDR_ADDR);
     
-    do
+    if(--index && !error)
     {
-      error = pf_read(p_buf, 512, &len);
+      error = pf_open(p_file_names[index]);
       
-      if(error)
-      {
-        zebbs_printf("FAILED TO READ FILE");
-        continue;
-      }
+      zebbs_printf(p_file_names[index]);
       
-      p_buf += len;
+      if(error) zebbs_printf("FAILED TO READ BINARY");
       
-      //finished read
-      if(len < 512)  zebbs_printf("Load Completed");
+      error = zebbs_file_read((uint8_t *)UBOOT_START);
     }
-    while(len >= 512);
     
   }
   
@@ -123,6 +113,32 @@ int main()
   zebbs_printf("JUMP FAILED");
   
   return 0;
+}
+
+int zebbs_file_read(uint8_t *p_buf)
+{
+  int error = 0;
+  unsigned int len = 0;
+  zebbs_printf("Load Started");
+  
+  do
+  {
+    error = pf_read(p_buf, 512, &len);
+    
+    if(error)
+    {
+      zebbs_printf("FAILED TO READ FILE");
+      continue;
+    }
+    
+    p_buf += len;
+    
+    //finished read
+    if(len < 512)  zebbs_printf("Load Completed");
+  }
+  while(len >= 512);
+  
+  return error;
 }
 
 void zebbs_printf(char *info_str)
