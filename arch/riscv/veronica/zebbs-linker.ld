@@ -77,8 +77,8 @@ SECTIONS
     PROVIDE(__metal_eccscrub_bit = 0);
 
     /* The RAM memories map for ECC scrubbing */
-    PROVIDE( metal_dtim_0_memory_start = 0x80000000 );
-    PROVIDE( metal_dtim_0_memory_end = 0x80000000 + 0x4000 );
+    PROVIDE( metal_dtim_0_memory_start = 0x08000000 );
+    PROVIDE( metal_dtim_0_memory_end = 0x08000000 + 0x4000 );
     PROVIDE( metal_itim_0_memory_start = 0x0080000 );
     PROVIDE( metal_itim_0_memory_end = 0x0080000 + 0x400 );
 

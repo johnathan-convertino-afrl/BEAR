@@ -39,14 +39,14 @@
 #include "sdcard_spi.h"
 
 // MAGIC
-#define SD_FAST_FREQ_HZ         5000000
+#define SD_FAST_FREQ_HZ         1000000
 #define SD_SLOW_FREQ_HZ         100000
 #define SD_INIT_WORD            0xFF
 #define SD_BITS_PER_TRANS       8
 #define SD_ATTEMPT_FACTOR       10
 #define SD_ATTEMPT_SLOW         (SD_SLOW_FREQ_HZ/(SD_BITS_PER_TRANS * SD_ATTEMPT_FACTOR))
-#define SD_ATTEMPT_FAST         (SD_FAST_FREQ_HZ/SD_BITS_PER_TRANS)
-#define SD_INIT_ATTEMPT         (SD_SLOW_FREQ_HZ/(SD_ATTEMPT_FACTOR*10))
+#define SD_ATTEMPT_FAST         (SD_FAST_FREQ_HZ/(SD_BITS_PER_TRANS * SD_ATTEMPT_FACTOR))
+#define SD_INIT_ATTEMPT         (SD_SLOW_FREQ_HZ/(SD_ATTEMPT_FACTOR*100))
 #define SD_START_TOKEN          0xFE
 #define SD_DATA_ACCEPTED_TOKEN  0x05
 #define SD_DATA_REJ_CRC_TOKEN   0x0B
@@ -163,8 +163,6 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   // setup spi device to use for communication.
   p_spi = initSpi(memory_address);
   
-reinit:
-  
   setSpiMode(p_spi, 0, 0);
   
   setSpiClockFreq(p_spi, SD_SLOW_FREQ_HZ);
@@ -174,7 +172,7 @@ reinit:
   p_sdcard_spi->p_spi = p_spi;
   p_sdcard_spi->cs_num = cs_num;
   
-  //Try to send command 0 10 times and receive idle response.
+  //Try to send command 0 x times and receive idle response.
   init_attempts = SD_INIT_ATTEMPT;
   do
   {    
@@ -205,11 +203,9 @@ reinit:
     
     clrSpiForceSelect(p_spi);
     
-    init_attempts--;
-    
     waitForTrans(p_spi, 100);
   }
-  while((init_attempts > 0) && (p_sdcard_spi->last_r1 != SD_RESP_IDLE_BIT_MASK_R1));
+  while((--init_attempts > 0) && (p_sdcard_spi->last_r1 != SD_RESP_IDLE_BIT_MASK_R1));
         
   if((p_sdcard_spi->last_r1 != SD_RESP_IDLE_BIT_MASK_R1) && (!init_attempts))
   {
@@ -258,6 +254,9 @@ reinit:
 
   waitForTrans(p_spi, 10);
   
+  //set clock to fast
+  setSpiClockFreq(p_spi, SD_FAST_FREQ_HZ);
+  
   setSpiForceSelect(p_spi);
   
   //find out if voltage range is good.
@@ -276,7 +275,7 @@ reinit:
     return SD_ERROR_RETURN;
   }
 
-  waitForTrans(p_spi, 100);
+  waitForTrans(p_spi, 1);
   
   //send ACMD41 till we come out of idle
   init_attempts = SD_INIT_ATTEMPT;
@@ -287,25 +286,25 @@ reinit:
     //command arg for version one cards does not set high capacity. version two attempts to set this.
     sendAppCommand(p_spi, SD_ACMD41, (p_sdcard_spi->state == INIT_V2 ? SD_ACMD41_ARG : SD_CMD_NULL_ARG), SD_CMD_NULL_CRC);
     
-    p_sdcard_spi->last_r1 = recvRespOneByte(p_spi, SD_ATTEMPT_SLOW);
+    p_sdcard_spi->last_r1 = recvRespOneByte(p_spi, SD_ATTEMPT_FAST);
     
     clrSpiForceSelect(p_spi);
     
-    waitForTrans(p_spi, 100);
+    waitForTrans(p_spi, 1);
     
     //if we start getting FFF something has gone wrong in the init, we can try to reset it with command 0 and see what happens.
-    if(p_sdcard_spi->last_r1 == SD_INIT_WORD)
-    {
-      setSpiForceSelect(p_spi);
-    
-      sendCommand(p_spi, SD_CMD0, SD_CMD_NULL_ARG, SD_CMD0_CRC);
-      
-      p_sdcard_spi->last_r1 = recvRespOneByte(p_spi, SD_ATTEMPT_SLOW);
-      
-      clrSpiForceSelect(p_spi);
-      
-      waitForTrans(p_spi, 100);
-    }
+//     if(p_sdcard_spi->last_r1 == SD_INIT_WORD)
+//     {
+//       setSpiForceSelect(p_spi);
+//     
+//       sendCommand(p_spi, SD_CMD0, SD_CMD_NULL_ARG, SD_CMD0_CRC);
+//       
+//       p_sdcard_spi->last_r1 = recvRespOneByte(p_spi, SD_ATTEMPT_FAST);
+//       
+//       clrSpiForceSelect(p_spi);
+//       
+//       waitForTrans(p_spi, 1);
+//     }
   }
   while((--init_attempts > 0) && (p_sdcard_spi->last_r1));
   
@@ -316,10 +315,7 @@ reinit:
     return SD_ERROR_RETURN;
   }
   
-  //set clock to fast
-  setSpiClockFreq(p_spi, SD_FAST_FREQ_HZ);
-  
-  waitForTrans(p_spi, 10);
+  waitForTrans(p_spi, 1);
     
   setSpiForceSelect(p_spi);
   
@@ -383,7 +379,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
 {
   int index;
   
-  uint8_t crc[2];
+  volatile uint8_t crc[2];
   
   uint16_t index_offset;
   
@@ -411,7 +407,7 @@ uint8_t readSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t address, uint8
   
   p_sdcard_spi->last_r1 = recvRespOneByte(p_sdcard_spi->p_spi, SD_ATTEMPT_FAST);
   
-  if(p_sdcard_spi->last_r1) 
+  if(p_sdcard_spi->last_r1 == SD_INIT_WORD) 
   {
     clrSpiForceSelect(p_sdcard_spi->p_spi);
     
@@ -594,7 +590,7 @@ static inline uint8_t recvRawData(struct s_spi *p_spi)
 // recv a response type R1 
 static inline uint8_t recvRespOneByte(struct s_spi *p_spi, uint32_t tries)
 {
-  uint8_t byte_tries = 0;
+  uint32_t byte_tries = 0;
   uint8_t response = 0;
   
   do

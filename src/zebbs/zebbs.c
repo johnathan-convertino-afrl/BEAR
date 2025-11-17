@@ -85,9 +85,9 @@ int main()
   {
     error = zebbs_file_read((uint8_t *)DDR_ADDR);
     
-    if(--index && !error)
+    if(index && !error)
     {
-      error = pf_open(p_file_names[index]);
+      error = pf_open(p_file_names[--index]);
       
       zebbs_printf(p_file_names[index]);
       

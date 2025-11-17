@@ -12,7 +12,7 @@ endif()
 
 # link_libraries()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR} -std=c99 -Ofast -Wall -Wextra -ffunction-sections ")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR} -std=c99 -Ofast -g -Wall -Wextra -ffunction-sections ")
 
 foreach(DRIVER_LIB IN LISTS DRIVER_LIST)
   get_target_property(LIB_INCLUDES ${DRIVER_LIB} INCLUDE_DIRECTORIES)
