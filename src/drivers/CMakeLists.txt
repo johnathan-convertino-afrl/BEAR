@@ -21,3 +21,7 @@ endif()
 if(ALTERA_DRV_SPI)
   add_subdirectory(spi)
 endif()
+
+if(XILINX_DRV_AXI_TFT)
+  add_subdirectory(axi_tft)
+endif()

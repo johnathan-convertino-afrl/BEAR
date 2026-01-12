@@ -32,6 +32,7 @@ set(APP_LIST
   spi_echo
   uart_echo_irq
   uart_echo
+  axi_tft_write
 )
 
 function(gen_target_binary TARGET_NAME)

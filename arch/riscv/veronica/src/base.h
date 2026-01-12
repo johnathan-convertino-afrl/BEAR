@@ -12,10 +12,12 @@
 #include <stdint.h>
         
 #define PERF_ADDR_BASE  0x40000000
+#define ACC_ADDR_BASE   0x70000000
 
 #define UART_ADDR     (0x04A10000 + PERF_ADDR_BASE)
 #define SPI_ADDR      (0x04A20000 + PERF_ADDR_BASE)
 #define GPIO_ADDR     (0x04A00000 + PERF_ADDR_BASE)
+#define TFT_ADDR      (0x04A10000 + ACC_ADDR_BASE)
 #define PLIC_ADDR     0x0C000000
 #define CLINT_ADDR    0x02000000
 #define DDR_ADDR      0x80000000

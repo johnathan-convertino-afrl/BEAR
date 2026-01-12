@@ -1,0 +1,3 @@
+[submodule "src/doomgeneric"]
+	path = src/doomgeneric
+	url = https://github.com/johnathan-convertino-afrl/doomgeneric.git
