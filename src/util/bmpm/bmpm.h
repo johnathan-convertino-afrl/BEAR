@@ -34,7 +34,7 @@
 #ifndef __UTIL_BMPMANIP_H
 #define __UTIL_BMPMANIP_H
 
-#define HEADER_SIZE     40
+#define HEADER_SIZE     138
 #define BMP_16BIT       0x10
 #define BMP_32BIT       0x20
 #define BMP_COLOR_MASK  0x1F
@@ -51,7 +51,7 @@ extern "C" {
   * @param op_data Double pointer to memory that contains image data.
   * @param len Total number of bytes in buffer.
   * 
-  * @return 0 on error, new length on success.
+  * @return 0 on error, new length in on success.
   *************************************************/
 uint32_t bmpmConvertToRaw(void **op_data, uint32_t len);
 

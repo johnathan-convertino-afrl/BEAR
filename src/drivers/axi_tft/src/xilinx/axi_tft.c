@@ -35,7 +35,7 @@
 #include <string.h>
 
 // Write data to vram space
-void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, uint32_t *p_buffer, uint32_t len, uint32_t const_data);
+void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, void *p_buffer, uint32_t len, uint32_t const_data);
 
 // Initializes axi tft structure and device
 struct s_axi_tft *initAxiTft(uint32_t memory_address)
@@ -137,7 +137,7 @@ uint8_t getAxiTftStatus(struct s_axi_tft *p_axi_tft)
 }
 
 // Write data to vram space
-void writeAxiTftVRAMbuffer(struct s_axi_tft *p_axi_tft, uint32_t start, uint32_t *p_buffer, uint32_t len)
+void writeAxiTftVRAMbuffer(struct s_axi_tft *p_axi_tft, uint32_t start, void *p_buffer, uint32_t len)
 {
   if(!p_buffer) return;
   
@@ -151,7 +151,7 @@ void writeAxiTftVRAMconst(struct s_axi_tft *p_axi_tft, uint32_t start, uint32_t 
 }
 
 // Write data to vram space, passing null to p_buffer will write const_data instead.
-void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, uint32_t *p_buffer, uint32_t len, uint32_t const_data)
+void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, void *p_buffer, uint32_t len, uint32_t const_data)
 {
   // X should be between 0 to 640
   uint16_t x_cor = start % XRES;
@@ -173,6 +173,7 @@ void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, uint32_t *p_bu
   
   //Get start address
   uint32_t *p_vram = (uint32_t *)p_axi_tft->addr;
+  uint32_t *p_temp = (uint32_t *)p_buffer;
   
   //offset if we are starting on a line greater than 0 by the virtual res.
   p_vram += XRES_VIR*y_cor;
@@ -184,7 +185,7 @@ void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, uint32_t *p_bu
     for(x_cor; x_cor < XRES; x_cor++)
     {
       //increment buffer with current x
-      *(p_vram+x_cor) = (p_buffer ? *(p_buffer+offset) : const_data);
+      *(p_vram+x_cor) = (p_temp ? *(p_temp+offset) : const_data);
       
       if(++offset >= len) return;
     }

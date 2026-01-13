@@ -148,7 +148,7 @@ uint8_t getAxiTftStatus(struct s_axi_tft *p_axi_tft);
   * @param p_buffer 32bit unsigned data that is a8r8g8b8 (MSB to LSB).
   * @param len Number of words (32bit) in the buffer to write.
   *************************************************/
-void writeAxiTftVRAMbuffer(struct s_axi_tft *p_axi_tft, uint32_t start, uint32_t *p_buffer, uint32_t len);
+void writeAxiTftVRAMbuffer(struct s_axi_tft *p_axi_tft, uint32_t start, void *p_buffer, uint32_t len);
 
 /*********************************************//**
   * @brief Write constant data to vram space

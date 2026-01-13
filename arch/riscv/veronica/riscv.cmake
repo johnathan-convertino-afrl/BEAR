@@ -94,7 +94,7 @@ set( CMAKE_OBJDUMP      ${RISCV_TOOLCHAIN_BIN_PATH}/${CROSS_COMPILE}objdump
 if(BOOTLOADER)
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Ofast -g -fdata-sections -ffunction-sections -fstrict-volatile-bitfields -fno-strict-aliasing" )
 else()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -g -MD -fdata-sections -ffunction-sections -fstrict-volatile-bitfields -fno-strict-aliasing" )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -g -fdata-sections -ffunction-sections -fstrict-volatile-bitfields -fno-strict-aliasing" )
 endif()
 
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}" )
@@ -102,7 +102,7 @@ set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}" )
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
 set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
 set( CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
-set( CMAKE_EXE_LINKER_FLAGS   "-T ${LINKER_SCRIPT} -march=${CMAKE_SYSTEM_PROCESSOR} -lgcc -mcmodel=medany -nostartfiles -ffreestanding -Wl,--gc-sections" )
+set( CMAKE_EXE_LINKER_FLAGS   "-T ${LINKER_SCRIPT} -march=${CMAKE_SYSTEM_PROCESSOR}  --specs=nosys.specs -lgcc -mcmodel=medlow -nostartfiles -ffreestanding -Wl,--gc-sections" )
 
 include_directories(${CMAKE_SOURCE_DIR}/arch/riscv/common/)
 

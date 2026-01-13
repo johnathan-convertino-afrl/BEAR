@@ -12,7 +12,7 @@ ENTRY(_enter)
 MEMORY
 {
     itim (airwx) : ORIGIN = 0x00800000, LENGTH = 1k
-    ram (arw!xi) : ORIGIN = 0x80040000, LENGTH = 256k
+    ram (arw!xi) : ORIGIN = 0x80040000, LENGTH = 16M
     rom (irx!wa) : ORIGIN = 0x80000000, LENGTH = 256k
 }
 
@@ -40,7 +40,7 @@ SECTIONS
      * initializes the stack pointers for each hart at the right offset fram
      * the _sp symbol.
      */
-    __stack_size = DEFINED(__stack_size) ? __stack_size : 0x400;
+    __stack_size = DEFINED(__stack_size) ? __stack_size : 0x80000;
     PROVIDE(__stack_size = __stack_size);
 
     /* The size of the heap can be overriden at build-time by adding the
@@ -58,7 +58,7 @@ SECTIONS
      * Note that depending on the memory layout, the bitness (32/64bit) of the
      * target, and the code model in use, this might cause a relocation error.
      */
-    __heap_size = DEFINED(__heap_size) ? __heap_size : 0x800;
+    __heap_size = DEFINED(__heap_size) ? __heap_size : 0x800000;
 
     /* The boot hart sets which hart runs the pre-main initialization routines,
      * including copying .data into RAM, zeroing the BSS region, running
@@ -78,9 +78,9 @@ SECTIONS
 
     /* The RAM memories map for ECC scrubbing */
     PROVIDE( metal_dtim_0_memory_start = 0x80040000 );
-    PROVIDE( metal_dtim_0_memory_end = 0x80040000 + 0x40000 );
-    PROVIDE( metal_itim_0_memory_start = 0x80080000 );
-    PROVIDE( metal_itim_0_memory_end = 0x80080000 + 0x400 );
+    PROVIDE( metal_dtim_0_memory_end = 0x80040000 + 0xFC0000 );
+    PROVIDE( metal_itim_0_memory_start = 0x00800000 );
+    PROVIDE( metal_itim_0_memory_end = 0x00800000 + 0x400 );
 
     /* ROM SECTION
      *
@@ -228,7 +228,7 @@ SECTIONS
         *(.data .data.*)
         *(.gnu.linkonce.d.*)
         . = ALIGN(8);
-        PROVIDE( __global_pointer$ = . + 0x800 );
+        PROVIDE( __global_pointer$ = . + 0x100000 );
         *(.sdata .sdata.* .sdata2.*)
         *(.gnu.linkonce.s.*)
     } >ram AT>rom :ram_init
@@ -257,18 +257,22 @@ SECTIONS
 	. = . + __tbss_size;
     } >ram :ram
 
-    .bss (NOLOAD): ALIGN(8) {
+    .bss (NOLOAD): ALIGN(4) {
+        _bss_start = .;
         *(.sbss*)
         *(.gnu.linkonce.sb.*)
         *(.bss .bss.*)
         *(.gnu.linkonce.b.*)
         *(COMMON)
+        _bss_end = .;
+        . = ALIGN(8);
+        PROVIDE( _end = . );
+        PROVIDE( end = . );
     } >ram :ram
 
     PROVIDE( metal_segment_bss_source_start = LOADADDR(.tbss) );
     PROVIDE( metal_segment_bss_target_start = ADDR(.tbss) );
     PROVIDE( metal_segment_bss_target_end = ADDR(.bss) + SIZEOF(.bss) );
-
  
 
     .stack (NOLOAD) : ALIGN(16) {
@@ -277,6 +281,10 @@ SECTIONS
         PROVIDE( _sp = . );
         PROVIDE(metal_segment_stack_end = .);
     } >ram :ram
+    
+    . = ALIGN(4);
+    PROVIDE( _edata = . );
+    PROVIDE( edata = . );
 
     .heap (NOLOAD) : ALIGN(8) {
         PROVIDE( __end = . );
@@ -284,7 +292,7 @@ SECTIONS
         PROVIDE( metal_segment_heap_target_start = . );
         /* If __heap_max is defined, grow the heap to use the rest of RAM,
          * otherwise set the heap size to __heap_size */
-        . = DEFINED(__heap_max) ? MIN( LENGTH(ram) - ( . - ORIGIN(ram)) , 0x10000000) : __heap_size;
+        . = DEFINED(__heap_max) ? MIN( LENGTH(ram) - ( . - ORIGIN(ram)) , 0xFC0000) : __heap_size;
         PROVIDE( metal_segment_heap_target_end = . );
         PROVIDE( _heap_end = . );
         PROVIDE( __heap_end = . );

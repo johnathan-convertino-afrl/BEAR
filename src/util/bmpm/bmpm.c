@@ -65,17 +65,17 @@ uint32_t bmpmConvertToRaw(void **op_data, uint32_t len)
   
   if(imgOffset <= 0) return 0;
   
-  newLen = len - imgOffset;
+  newLen -= imgOffset;
 
   //copy data, excluding header
-  memmove(*op_data, ((uint8_t *)*op_data)+imgOffset, newLen);
+  memmove(*op_data, ((uint8_t *)*op_data)+imgOffset, len);
   
-  p_temp = realloc(*op_data, newLen);
-  
+//   p_temp = realloc(*op_data, newLen);
+//   
   //reverse bitmap data, its in the wrong order for raw image data
-  if(!p_temp) return 0;
-  
-  *op_data = p_temp;
+//   if(!p_temp) return 0;
+//   
+//   *op_data = p_temp;
   
   if(reverseData(*op_data, newLen, g_bmp_data.width, g_bmp_data.height)) return 0;
   
@@ -112,8 +112,6 @@ uint32_t detectBMP(void const *p_data, uint32_t len)
   
   for(index = 0; index < HEADER_SIZE; index++)
   {
-    uint8_t data = p_temp[index];
-    
     switch(index)
     {
       case 0:
