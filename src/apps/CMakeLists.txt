@@ -33,6 +33,7 @@ set(APP_LIST
   uart_echo_irq
   uart_echo
   axi_tft_write
+  axi_tft_sdcard_fatfs_read_bitmap
 )
 
 function(gen_target_binary TARGET_NAME)

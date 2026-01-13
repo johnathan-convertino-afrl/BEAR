@@ -1,3 +1,6 @@
 [submodule "src/doomgeneric"]
 	path = src/doomgeneric
 	url = https://github.com/johnathan-convertino-afrl/doomgeneric.git
+[submodule "src/util/lwip"]
+	path = src/util/lwip
+	url = https://github.com/lwip-tcpip/lwip.git

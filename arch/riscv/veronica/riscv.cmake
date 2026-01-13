@@ -12,8 +12,9 @@ set(ALTERA_DRV_SPI ON)
 set(XILINX_DRV_GPIO ON)
 set(BUILD_UTIL_FATFS ON)
 set(BUILD_UTIL_SDCARD_SPI ON)
+set(BUILD_UTIL_BMPM ON)
 
-set(DRIVER_LIST bare_metal_startup bare_metal_base irq uart_drv gpio_drv spi_drv clint_drv plic_drv axi_tft_drv sdcard_spi_util fatfs_util beario_util )
+set(DRIVER_LIST bare_metal_startup bare_metal_base irq uart_drv gpio_drv spi_drv clint_drv plic_drv axi_tft_drv sdcard_spi_util fatfs_util beario_util bmpm_util)
 
 # Look for GCC in path
 # https://xpack.github.io/riscv-none-embed-gcc/

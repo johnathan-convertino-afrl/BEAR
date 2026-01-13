@@ -5,16 +5,9 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-add_subdirectory(beario)
+set(BMPM_UTIL_SRCS
+  bmpm.c
+  bmpm.h
+)
 
-if(BUILD_UTIL_SDCARD_SPI)
-  add_subdirectory(sdcard_spi)
-endif()
-
-if(BUILD_UTIL_FATFS)
-  add_subdirectory(pff3a)
-endif()
-
-if(BUILD_UTIL_BMPM)
-  add_subdirectory(bmpm)
-endif()
+add_library(bmpm_util ${BMPM_UTIL_SRCS})
