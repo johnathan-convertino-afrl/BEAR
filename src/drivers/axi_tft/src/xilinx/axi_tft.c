@@ -42,9 +42,6 @@ struct s_axi_tft *initAxiTft(uint32_t memory_address)
 {
   struct s_axi_tft *p_temp = (struct s_axi_tft *)memory_address;
   
-  p_temp->cr.reg = 0;
-  p_temp->iesr.reg = 0;
-  
   return p_temp;
 }
 

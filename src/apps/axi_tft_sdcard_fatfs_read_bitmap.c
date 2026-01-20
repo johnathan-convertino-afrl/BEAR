@@ -18,21 +18,15 @@ int main()
   
   beario_printf("\n\rSTARTING BITMAP TO RAW AXI TFT DISPLAY %d\n\r", c_LEN);
 
-  void *p_buf = NULL;//malloc(c_LEN);
+  void *p_buf = malloc(c_LEN);
   
   beario_printf("\n\rARRAY COMPLETE\n\r");
   
   FATFS file_sys;
   
   struct s_axi_tft *p_axi_tft = initAxiTft(TFT_ADDR);
-
-  __delay_ms(2);
   
-  setAxiTftTDEon(p_axi_tft);
-  
-  setAxiTftIntrEna(p_axi_tft);
-  
-  p_buf = (void *)getAxiTftVmemAddr(p_axi_tft) + 0x200000;
+  // p_buf = (void *)getAxiTftVmemAddr(p_axi_tft) + 0x200000;
   
   beario_printf("\n\rVIDEO ADDRESS 0x%x\n\r", getAxiTftVmemAddr(p_axi_tft));
   
@@ -77,15 +71,16 @@ int main()
     return 0;
   }
   
-  beario_printf("WIDTH: %d HEIGHT %d LEN %d\n\r", bmpmGetWidth(), bmpmGetHeight(), len/sizeof(uint32_t));
+  beario_printf("WIDTH: %d HEIGHT %d LEN %d OFFSET %d FIRST_WORD 0x%x\n\r", bmpmGetWidth(), bmpmGetHeight(), len/sizeof(uint32_t), bmpmGetOffset(), *((uint32_t *)p_buf));
   
   writeAxiTftVRAMbuffer(p_axi_tft, 0, p_buf, len/sizeof(uint32_t));
   
   beario_printf("RAW IMAGE WRITTEN TO AXI TFT\n\r");
   
-  // for(;;)
-  // {
-  //   __delay_ms(1000);
-  // }
+  for(;;)
+  {
+    __delay_ms(1000);
+  }
+  
   return 0;
 }

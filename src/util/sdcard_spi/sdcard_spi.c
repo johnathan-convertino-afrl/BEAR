@@ -290,21 +290,21 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     
     clrSpiForceSelect(p_spi);
     
-    waitForTrans(p_spi, 1);
+    waitForTrans(p_spi, 10);
     
-    //if we start getting FFF something has gone wrong in the init, we can try to reset it with command 0 and see what happens.
-//     if(p_sdcard_spi->last_r1 == SD_INIT_WORD)
-//     {
-//       setSpiForceSelect(p_spi);
-//     
-//       sendCommand(p_spi, SD_CMD0, SD_CMD_NULL_ARG, SD_CMD0_CRC);
-//       
-//       p_sdcard_spi->last_r1 = recvRespOneByte(p_spi, SD_ATTEMPT_FAST);
-//       
-//       clrSpiForceSelect(p_spi);
-//       
-//       waitForTrans(p_spi, 1);
-//     }
+    // if we start getting FFF something has gone wrong in the init, we can try to reset it with command 0 and see what happens.
+    if(p_sdcard_spi->last_r1 == SD_INIT_WORD)
+    {
+      setSpiForceSelect(p_spi);
+    
+      sendCommand(p_spi, SD_CMD0, SD_CMD_NULL_ARG, SD_CMD0_CRC);
+      
+      p_sdcard_spi->last_r1 = recvRespOneByte(p_spi, SD_ATTEMPT_FAST);
+      
+      clrSpiForceSelect(p_spi);
+      
+      waitForTrans(p_spi, 1);
+    }
   }
   while((--init_attempts > 0) && (p_sdcard_spi->last_r1));
   

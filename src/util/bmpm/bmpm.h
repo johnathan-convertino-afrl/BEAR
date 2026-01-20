@@ -69,6 +69,13 @@ signed int bmpmGetWidth();
   *************************************************/
 signed int bmpmGetHeight();
 
+/*********************************************//**
+  * @brief Get the header offset of the last converted bitmap
+  *
+  * @return 0 on error, offset on success.
+  *************************************************/
+uint32_t bmpmGetOffset();
+
 #ifdef __cplusplus
 }
 #endif

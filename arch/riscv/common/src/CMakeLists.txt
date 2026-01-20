@@ -11,4 +11,6 @@ else()
   set(BARE_METAL_STARTUP apps-startup.c)
 endif()
 
+list(APPEND BARE_METAL_STARTUP syscalls.c)
+
 add_library(bare_metal_startup OBJECT ${BARE_METAL_STARTUP})

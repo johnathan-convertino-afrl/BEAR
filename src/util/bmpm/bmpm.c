@@ -40,6 +40,7 @@ struct
   signed int width;
   signed int height;
   uint16_t depth;
+  uint32_t offset;
 } g_bmp_data;
 
 //helper functions
@@ -55,20 +56,21 @@ int reverseData(void *op_data, uint32_t len, signed int width, signed int height
 //strip header and flip data. LEN IS NUMBER OF BYTES in OP_DATA
 uint32_t bmpmConvertToRaw(void **op_data, uint32_t len)
 {
-  uint32_t imgOffset = 0;
-  
   uint32_t newLen = len;
   
-  uint8_t *p_temp = NULL;
+  uint8_t *p_temp = (uint8_t *)*op_data;
   
-  imgOffset = detectBMP(*op_data, len);
+  detectBMP(*op_data, len);
   
-  if(imgOffset <= 0) return 0;
+  if(g_bmp_data.offset <= 0) return 0;
   
-  newLen -= imgOffset;
+  newLen -= g_bmp_data.offset;
 
   //copy data, excluding header
-  memmove(*op_data, ((uint8_t *)*op_data)+imgOffset, len);
+  memmove(p_temp, &p_temp[g_bmp_data.offset], newLen);
+  
+  
+  // *op_data = ((uint8_t *)*op_data)+g_bmp_data.offset;
   
 //   p_temp = realloc(*op_data, newLen);
 //   
@@ -95,12 +97,17 @@ signed int bmpmGetHeight()
   return g_bmp_data.height;
 }
 
+// return header offset of the last converted bitmap
+uint32_t bmpmGetOffset()
+{
+  return g_bmp_data.offset;
+}
+
 //detects bitmap image, if it exists and is of the right type
 //this will return the offset byte location
 uint32_t detectBMP(void const *p_data, uint32_t len)
 {
   uint32_t index = 0;
-  uint32_t dataOffset = 0;
   
   uint8_t *p_temp = (uint8_t *)p_data;
   //not enough data to be a bitmap, must be larger than the header
@@ -109,6 +116,7 @@ uint32_t detectBMP(void const *p_data, uint32_t len)
   g_bmp_data.width = 0;
   g_bmp_data.height = 0;
   g_bmp_data.depth = 0;
+  g_bmp_data.offset = 0;
   
   for(index = 0; index < HEADER_SIZE; index++)
   {
@@ -124,7 +132,7 @@ uint32_t detectBMP(void const *p_data, uint32_t len)
       case 11:
       case 12:
       case 13:
-        dataOffset |= p_temp[index] << ((index - 10) * 8);
+        g_bmp_data.offset |= (uint32_t)(p_temp[index] << ((index - 10) * 8));
         break;
       case 18:
       case 19:
@@ -150,7 +158,7 @@ uint32_t detectBMP(void const *p_data, uint32_t len)
     }
   }
   
-  return dataOffset;
+  return g_bmp_data.offset;
 }
 
 //reverse data, swap bottom to top and top to bottom.
