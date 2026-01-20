@@ -225,17 +225,19 @@ SECTIONS
      */
 
     .data : ALIGN(8) {
+        _sdata = .;
         *(.data .data.*)
         *(.gnu.linkonce.d.*)
         . = ALIGN(8);
         PROVIDE( __global_pointer$ = . + 0x800 );
         *(.sdata .sdata.* .sdata2.*)
         *(.gnu.linkonce.s.*)
+        _edata = .;
     } >ram AT>rom :ram_init
 
     .tdata : ALIGN(8) {
         PROVIDE( __tls_base = . );
-	*(.tdata .tdata.* .gnu.linkonce.td.*)
+      *(.tdata .tdata.* .gnu.linkonce.td.*)
     } >ram AT>rom :tls :ram_init
 
     PROVIDE( __tdata_source = LOADADDR(.tdata) );
@@ -258,18 +260,18 @@ SECTIONS
     } >ram :ram
 
     .bss (NOLOAD): ALIGN(8) {
+        _sbss = .;
         *(.sbss*)
         *(.gnu.linkonce.sb.*)
         *(.bss .bss.*)
         *(.gnu.linkonce.b.*)
         *(COMMON)
+        _ebss = .;
     } >ram :ram
 
     PROVIDE( metal_segment_bss_source_start = LOADADDR(.tbss) );
     PROVIDE( metal_segment_bss_target_start = ADDR(.tbss) );
     PROVIDE( metal_segment_bss_target_end = ADDR(.bss) + SIZEOF(.bss) );
-
- 
 
     .stack (NOLOAD) : ALIGN(16) {
         PROVIDE(metal_segment_stack_begin = .);
@@ -279,16 +281,16 @@ SECTIONS
     } >ram :ram
 
     .heap (NOLOAD) : ALIGN(8) {
-        PROVIDE( __end = . );
-        PROVIDE( __heap_start = . );
+        PROVIDE( heap_start = . );
         PROVIDE( metal_segment_heap_target_start = . );
         /* If __heap_max is defined, grow the heap to use the rest of RAM,
          * otherwise set the heap size to __heap_size */
         . = DEFINED(__heap_max) ? MIN( LENGTH(ram) - ( . - ORIGIN(ram)) , 0x10000000) : __heap_size;
         PROVIDE( metal_segment_heap_target_end = . );
-        PROVIDE( _heap_end = . );
-        PROVIDE( __heap_end = . );
+        PROVIDE( heap_end = . );
     } >ram :ram
+    
+    end = .;
 
     /* C++ exception handling information is
      * not useful with our current runtime environment,
@@ -296,6 +298,6 @@ SECTIONS
      * we have something that can use it
      */
     /DISCARD/ : {
-	*(.eh_frame .eh_frame.*)
+      *(.eh_frame .eh_frame.*)
     }
 }

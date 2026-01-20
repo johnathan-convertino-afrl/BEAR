@@ -225,12 +225,14 @@ SECTIONS
      */
 
     .data : ALIGN(8) {
+        _sdata = .;
         *(.data .data.*)
         *(.gnu.linkonce.d.*)
         . = ALIGN(8);
         PROVIDE( __global_pointer$ = . + 0x100000 );
         *(.sdata .sdata.* .sdata2.*)
         *(.gnu.linkonce.s.*)
+        _edata = .;
     } >ram AT>rom :ram_init
 
     .tdata : ALIGN(8) {
@@ -246,28 +248,26 @@ SECTIONS
     PROVIDE( metal_segment_data_target_end = ADDR(.tdata) + SIZEOF(.tdata) );
 
     .tbss : ALIGN(8) {
-	*(.tbss .tbss.* .gnu.linkonce.tb.*)
-	*(.tcommon .tcommon.*)
-	PROVIDE( __tls_end = . );
+      *(.tbss .tbss.* .gnu.linkonce.tb.*)
+      *(.tcommon .tcommon.*)
+      PROVIDE( __tls_end = . );
     } >ram AT>ram :tls :ram
+    
     PROVIDE( __tbss_size = SIZEOF(.tbss) );
     PROVIDE( __tls_size = __tls_end - __tls_base );
 
     .tbss_space : ALIGN(8) {
-	. = . + __tbss_size;
+      . = . + __tbss_size;
     } >ram :ram
 
     .bss (NOLOAD): ALIGN(4) {
-        _bss_start = .;
+        _sbss = .;
         *(.sbss*)
         *(.gnu.linkonce.sb.*)
         *(.bss .bss.*)
         *(.gnu.linkonce.b.*)
         *(COMMON)
-        _bss_end = .;
-        . = ALIGN(8);
-        PROVIDE( _end = . );
-        PROVIDE( end = . );
+        _ebss = .;
     } >ram :ram
 
     PROVIDE( metal_segment_bss_source_start = LOADADDR(.tbss) );
@@ -281,22 +281,18 @@ SECTIONS
         PROVIDE( _sp = . );
         PROVIDE(metal_segment_stack_end = .);
     } >ram :ram
-    
-    . = ALIGN(4);
-    PROVIDE( _edata = . );
-    PROVIDE( edata = . );
 
     .heap (NOLOAD) : ALIGN(8) {
-        PROVIDE( __end = . );
-        PROVIDE( __heap_start = . );
+        PROVIDE( heap_start = . );
         PROVIDE( metal_segment_heap_target_start = . );
         /* If __heap_max is defined, grow the heap to use the rest of RAM,
          * otherwise set the heap size to __heap_size */
         . = DEFINED(__heap_max) ? MIN( LENGTH(ram) - ( . - ORIGIN(ram)) , 0xFC0000) : __heap_size;
         PROVIDE( metal_segment_heap_target_end = . );
-        PROVIDE( _heap_end = . );
-        PROVIDE( __heap_end = . );
+        PROVIDE( heap_end = . );
     } >ram :ram
+    
+    end = .;
 
     /* C++ exception handling information is
      * not useful with our current runtime environment,
@@ -304,6 +300,6 @@ SECTIONS
      * we have something that can use it
      */
     /DISCARD/ : {
-	*(.eh_frame .eh_frame.*)
+      *(.eh_frame .eh_frame.*)
     }
 }
