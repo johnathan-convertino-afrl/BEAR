@@ -275,7 +275,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     return SD_ERROR_RETURN;
   }
 
-  waitForTrans(p_spi, 1);
+  waitForTrans(p_spi, 10);
   
   //send ACMD41 till we come out of idle
   init_attempts = SD_INIT_ATTEMPT;
@@ -303,7 +303,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
       
       clrSpiForceSelect(p_spi);
       
-      waitForTrans(p_spi, 1);
+      waitForTrans(p_spi, 10);
     }
   }
   while((--init_attempts > 0) && (p_sdcard_spi->last_r1));

@@ -26,6 +26,7 @@ license: MIT
   
 ### Usage
   - Use initAxiEthernetLite to setup a struct at the device memory address. Use the struct to access the device registers.
+  - ethernetif contains the driver file needed for lwip.
 
 ### Provides
   - initAxiEthernetLite                  ... Initializes AXI ethernet lite structure and device

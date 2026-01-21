@@ -11,7 +11,6 @@
 
 int main()
 {
-  // int index = 0;
   int error = 0;
   unsigned int len;
   const int c_LEN = XRES*YRES*sizeof(uint32_t)+HEADER_SIZE;
@@ -20,13 +19,11 @@ int main()
 
   void *p_buf = malloc(c_LEN);
   
-  beario_printf("\n\rARRAY COMPLETE\n\r");
+  beario_printf("\n\rMALLOC COMPLETE\n\r");
   
   FATFS file_sys;
   
   struct s_axi_tft *p_axi_tft = initAxiTft(TFT_ADDR);
-  
-  // p_buf = (void *)getAxiTftVmemAddr(p_axi_tft) + 0x200000;
   
   beario_printf("\n\rVIDEO ADDRESS 0x%x\n\r", getAxiTftVmemAddr(p_axi_tft));
   
@@ -41,7 +38,7 @@ int main()
     return 0;
   }
   
-  beario_printf("OPEN BITMAP\n\r");
+  beario_printf("OPEN BITMAP, image.bmp\n\r");
   
   error = pf_open("image.bmp");
   
@@ -71,7 +68,7 @@ int main()
     return 0;
   }
   
-  beario_printf("WIDTH: %d HEIGHT %d LEN %d OFFSET %d FIRST_WORD 0x%x\n\r", bmpmGetWidth(), bmpmGetHeight(), len/sizeof(uint32_t), bmpmGetOffset(), *((uint32_t *)p_buf));
+  beario_printf("WIDTH: %d HEIGHT %d WORD_LEN %d OFFSET %d FIRST_WORD 0x%x\n\r", bmpmGetWidth(), bmpmGetHeight(), len/sizeof(uint32_t), bmpmGetOffset(), *((uint32_t *)p_buf));
   
   writeAxiTftVRAMbuffer(p_axi_tft, 0, p_buf, len/sizeof(uint32_t));
   

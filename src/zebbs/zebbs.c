@@ -55,7 +55,11 @@ int main()
   
   FATFS file_sys;
   
+  __delay_ms(100);
+  
   beario_stronly_printf("\n\r");
+  
+  __delay_ms(100);
   
   zebbs_printf("Starting");
   
@@ -70,28 +74,34 @@ int main()
   
   do
   {
-    error = pf_open(p_file_names[--index]);
+    zebbs_printf(p_file_names[--index]);
+    
+    error = pf_open(p_file_names[index]);
     
     if(!error) break;
+    
+    if(error) 
+    {
+      zebbs_printf("FAILED TO OPEN FILE");
+      //decrement index to load app
+      if(index == (NUM_FILE_NAMES-1)) index--;
+    }
   }
   while(index > 0);
-  
-  if(error) zebbs_printf("FAILED TO READ BINARY");
-  
-  zebbs_printf(p_file_names[index]);
   
   //if error index will be 0 and we will jump to ddr, this is so jtag loaded apps can be run after a reset.
   if(!error)
   {
     error = zebbs_file_read((uint8_t *)DDR_ADDR);
     
-    if(index && !error)
+    //if we are not the last file and there is no error, load uboot
+    if((index > 0) && !error)
     {
       error = pf_open(p_file_names[--index]);
       
       zebbs_printf(p_file_names[index]);
       
-      if(error) zebbs_printf("FAILED TO READ BINARY");
+      if(error) zebbs_printf("FAILED TO OPEN FILE");
       
       error = zebbs_file_read((uint8_t *)UBOOT_START);
     }
