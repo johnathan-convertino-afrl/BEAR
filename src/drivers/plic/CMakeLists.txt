@@ -15,3 +15,7 @@ set(PLIC_DRV_SRCS
 )
 
 add_library(plic_drv ${PLIC_DRV_SRCS})
+
+get_target_property(LIB_INCLUDES plic_drv INCLUDE_DIRECTORIES)
+
+target_include_directories(plic_drv PUBLIC ${LIB_INCLUDES})

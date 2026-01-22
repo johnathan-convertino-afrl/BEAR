@@ -22,3 +22,7 @@ if(XILINX_DRV_UART)
 endif()
 
 add_library(gpio_drv ${GPIO_DRV_SRCS})
+
+get_target_property(LIB_INCLUDES gpio_drv INCLUDE_DIRECTORIES)
+
+target_include_directories(gpio_drv PUBLIC ${LIB_INCLUDES})

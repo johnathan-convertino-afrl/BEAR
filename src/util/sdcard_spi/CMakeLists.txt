@@ -5,10 +5,7 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-get_target_property(LIB_INCLUDES spi_drv INCLUDE_DIRECTORIES)
-
 include_directories(
-  ${LIB_INCLUDES}
   ${CMAKE_SOURCE_DIR}/src/util/sdcard_spi
 )
 

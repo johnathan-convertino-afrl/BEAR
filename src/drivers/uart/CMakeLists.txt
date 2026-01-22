@@ -22,3 +22,7 @@ if(XILINX_DRV_UART)
 endif()
 
 add_library(uart_drv ${UART_DRV_SRCS})
+
+get_target_property(LIB_INCLUDES uart_drv INCLUDE_DIRECTORIES)
+
+target_include_directories(uart_drv PUBLIC ${LIB_INCLUDES})

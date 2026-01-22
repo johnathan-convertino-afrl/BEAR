@@ -1,15 +1,14 @@
 /***************************************************************************//**
-  * @file     beario_uart.h
-  * @brief    Generic Uart IO for C using putchar and getchar
-  * @details  Baremetal C driver targeting UART
+  * @file     global_devices.h
+  * @brief    Null pointers to devices init by dev_init
   * @author   Johnathan Convertino (johnathan.convertino.1@us.af.mil)
-  * @date     09/16/2025
+  * @date     01/22/2026
   * @version
   * - 0.0.0
   *
   * @license mit
   *
-  * Copyright 2025 Johnathan Convertino
+  * Copyright 2026 Johnathan Convertino
   *
   * Permission is hereby granted, free of charge, to any person obtaining a copy
   * of this software and associated documentation files (the "Software"), to deal
@@ -29,31 +28,7 @@
   * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
   * IN THE SOFTWARE.
   *****************************************************************************/
-#include <base.h>
-  
-#include <stdlib.h>
+#include <stddef.h>
 #include <uart.h>
 
-#include "beario.h"
-
-static struct s_uart *__gp_uart = (struct s_uart *)UART_ADDR;
-
-// emulate putchar
-int beario_putchar(int chr)
-{
-  while(getUartTxFifoFull(__gp_uart));
-  
-  setUartTxData(__gp_uart, (uint8_t) chr);
-  
-  return chr;
-}
-
-//emulate getchar
-int beario_getchar()
-{
-  while(!getUartRxFifoValid(__gp_uart));
-  
-  return getUartRxData(__gp_uart);
-}
-
-
+static struct s_uart *__gp_uart = NULL;

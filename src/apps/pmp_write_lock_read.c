@@ -4,10 +4,10 @@
 #include <plic.h>
 #include <clint.h>
 #include <irq/vector-table.h>
-#include <beario/beario.h>
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 struct s_plic   *gp_plic;
 struct s_clint  *gp_clint;
@@ -89,7 +89,7 @@ void riscv_mtvec_mti(void)
 
   setClintMTimeCmpOffset(gp_clint, calcMtimecmpSeconds(CPU_FREQ_HZ, 1));
 
-  beario_printf("\nTIMER TICK\r");
+  printf("\nTIMER TICK\r");
 }
 // The 'riscv_mtvec_exception' function is added to the vector table by the vector_table.c
 // This function looks at the cause of the exception, if it is an 'ecall' instruction then increment a global counter.
@@ -104,16 +104,16 @@ void riscv_mtvec_exception(void)
     case RISCV_EXCP_ENVIRONMENT_CALL_FROM_M_MODE:
       ecall_count++;
       // Make sure the return address is the instruction AFTER ecall
-      beario_printf("\nECALL FROM M MODE\r");
+      printf("\nECALL FROM M MODE\r");
       csr_write_mepc((int)&_FOR_LOOP_END);
       break;
     case RISCV_EXCP_LOAD_ACCESS_FAULT:
-      beario_printf("\nPMP.. READ LOCKED\r");
+      printf("\nPMP.. READ LOCKED\r");
       // plus 14 since lw is done at start, an we want to skip all the other stuff
       csr_write_mepc((int)&_FOR_LOOP_START);
       break;
     case RISCV_EXCP_STORE_AMO_ACCESS_FAULT:
-      beario_printf("\nPMP.. WRITE LOCKED\r");
+      printf("\nPMP.. WRITE LOCKED\r");
       // plus 2, since sw is 2 bytes
       csr_write_mepc((int)&_WFI_CALL_START);
       break;

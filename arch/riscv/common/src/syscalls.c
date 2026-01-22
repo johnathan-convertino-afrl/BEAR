@@ -32,24 +32,30 @@
 
 #include <sys/stat.h> 
 #include <sys/types.h>
+#include <uart.h>
+#include "dev_init.h"
   
 int _close(int file)
 {
+  //can't really close the uart either
   return -1;
 }
 
 int _isatty(int file)
 {
+  //yup... it is
   return 1;
 }
 
 int _lseek(int file, int ptr, int dir)
 {
+  //can't seek the uart
   return 0;
 }
 
 int _open(const char *name, int flags, ...)
 {
+  //for eventual file opening
   return -1;
 }
 
@@ -62,20 +68,45 @@ int _fstat(int file, struct stat *st)
 
 pid_t _getpid(void)
 {
+  //no multitasking.
   return (pid_t)0;
 }
 
 int _kill(pid_t pid, int sig)
 {
+  //be silly to kill are one task
   return -1;
 }
 
+// read call for printf functionality.
 int _read(int file, char *ptr, int len)
 {
-  return -1;
+  int index;
+  // we do not handle anything other than stdin for now
+  if(file != 1) return -1;
+  
+  for(index = 0; index < len; index++)
+  {
+    while(!getUartRxFifoValid(__gp_uart));
+    
+    ptr[index] = getUartRxData(__gp_uart);
+  }
+  
+  return index;
 }
 
-int _write(int fd, char *ptr, int len)
+int _write(int file, char *ptr, int len)
 {
-  return -1;
+  int index;
+  // we do not handle anything other than stdout or error for now
+  if(file > 2 || !file) return -1;
+  
+  for(index = 0; index < len; index++)
+  {
+    while(getUartTxFifoFull(__gp_uart));
+    
+    setUartTxData(__gp_uart, ptr[index]);
+  }
+  
+  return index;
 }

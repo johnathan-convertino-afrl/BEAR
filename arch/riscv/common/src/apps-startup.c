@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "dev_init.h"
 
 // Generic C function pointer.
 typedef void(*function_t)(void) ;
@@ -92,6 +93,8 @@ void _start(void) {
          ++entry) {
         (*entry)();
     }
+    
+    dev_init();
 
     int rc = main();
 

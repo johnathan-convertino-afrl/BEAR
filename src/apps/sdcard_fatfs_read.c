@@ -1,9 +1,9 @@
 #include <base.h>
 
-#include <beario/beario.h>
 #include <pff3a/diskio.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
 int main()
 {
@@ -14,24 +14,24 @@ int main()
   
   FATFS file_sys;
   
-  beario_printf("\n\rMOUNT DRIVE\n\r");
+  printf("\n\rMOUNT DRIVE\n\r");
   
   error = pf_mount(&file_sys);
   
   if(error)
   {
-    beario_printf("MOUNT FAILED, %d\n\r", error);
+    printf("MOUNT FAILED, %d\n\r", error);
     
     return 0;
   }
   
-  beario_printf("OPEN TEXT\n\r");
+  printf("OPEN TEXT\n\r");
   
   error = pf_open("input.txt");
   
   if(error)
   {
-    beario_printf("FILE OPEN FAILED, %d\n\r", error);
+    printf("FILE OPEN FAILED, %d\n\r", error);
     return 0;
   }
 
@@ -47,7 +47,7 @@ int main()
     
     if(error)
     {
-      beario_printf("FAILED TO READ FILE, %d\n\r", error);
+      printf("FAILED TO READ FILE, %d\n\r", error);
       continue;
     }
     
@@ -55,16 +55,16 @@ int main()
     {
       if(index_char%64 == 0)
       {
-        beario_printf("\n\r");
+        printf("\n\r");
       }
       
       
-      beario_putchar(r_buf[index_char]);
+      putchar(r_buf[index_char]);
     }
     
     if(len < 512)
     {
-      beario_printf("\n\rFINISHED READING FILE\n\r");
+      printf("\n\rFINISHED READING FILE\n\r");
       return 0;
     }
   }

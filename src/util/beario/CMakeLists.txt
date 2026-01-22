@@ -17,9 +17,5 @@ set(BEARIO_UTIL_SRCS
   beario.h
 )
 
-if(BEARIO_UART)
-  list(APPEND BEARIO_UTIL_SRCS src/driver/beario_uart.c)
-endif()
-
 add_library(beario_util ${BEARIO_UTIL_SRCS})
 target_link_libraries(beario_util PUBLIC uart_drv)

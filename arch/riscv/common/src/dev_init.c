@@ -1,15 +1,15 @@
 /***************************************************************************//**
-  * @file     beario.h
-  * @brief    Generic Uart IO for C
-  * @details  Baremetal C driver targeting UART
+  * @file     dev_init.c
+  * @brief    Provide device init for apps and zebbs
+  * @details  Setup UART and SDCARD for stdout/in, and file io.
   * @author   Johnathan Convertino (johnathan.convertino.1@us.af.mil)
-  * @date     08/28/2025
+  * @date     01/22/2026
   * @version
   * - 0.0.0
   *
   * @license mit
   *
-  * Copyright 2025 Johnathan Convertino
+  * Copyright 2026 Johnathan Convertino
   *
   * Permission is hereby granted, free of charge, to any person obtaining a copy
   * of this software and associated documentation files (the "Software"), to deal
@@ -30,61 +30,15 @@
   * IN THE SOFTWARE.
   *****************************************************************************/
 #include <base.h>
-  
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include "dev_init.h"
 
-#include "beario.h"
+// static struct s_sdcard_spi __gp_sdcard_spi = NULL;
 
-#define TEMP_STR_MAX 1024
-
-// emulates printf for strings only
-int beario_stronly_printf(char *str_format, ...)
+void dev_init()
 {
-  char str_char;
-  int index = 0;
-
-  va_list args;
+  __gp_uart = (struct s_uart *)UART_ADDR;
   
-  va_start(args, str_format);
-  
-  str_char = *str_format;
-  
-  while(str_char)
-  {
-    index++;
-    char *p_next_str_char = ++str_format;
-    char *p_temp;
-    
-    switch(str_char)
-    {
-      case '%':
-        if(*p_next_str_char == 's')
-        {
-          p_temp = (va_arg(args, char *));
-          
-          while(*p_temp)
-          {
-            putchar(*p_temp);
-            
-            p_temp++;
-          }
-        }
-
-        p_next_str_char = ++str_format;
-        
-        break;
-      default:
-        putchar(str_char);
-        break;
-    }
-    
-    str_char = *p_next_str_char;
-  }
-  
-  va_end(args);
-  
-  return index;
+//   __gp_sdcard_spi = malloc(sizeof(struct s_sdcard_spi));
+//   
+//   if(!__gp_sdcard_spi) beario_stronly_printf("SDCARD SPI MALLOC RESULT WAS NULL\n\r");
 }
-

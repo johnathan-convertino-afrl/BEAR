@@ -22,3 +22,7 @@ if(XILINX_DRV_AXI_TFT)
 endif()
 
 add_library(axi_tft_drv ${AXI_TFT_DRV_SRCS})
+
+get_target_property(LIB_INCLUDES axi_tft_drv INCLUDE_DIRECTORIES)
+
+target_include_directories(axi_tft_drv PUBLIC ${LIB_INCLUDES})

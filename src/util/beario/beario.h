@@ -40,16 +40,6 @@ extern "C" {
 #endif
 
 /*********************************************//**
-  * @brief emulates printf functionality
-  * 
-  * @param str_format same as the printf format line
-  * @param ... Variable parameters.
-  * 
-  * @return Number of characters, or a negative value on error.
-  *************************************************/
-int beario_printf(char *str_format, ...);
-
-/*********************************************//**
   * @brief emulates printf functionality for strings only
   * 
   * @param str_format same as the printf format line
@@ -59,32 +49,6 @@ int beario_printf(char *str_format, ...);
   * @return Number of characters, or a negative value on error.
   *************************************************/
 int beario_stronly_printf(char *str_format, ...);
-
-/*********************************************//**
-  * @brief emulates scanf functionality
-  *
-  * @param str_format same as the scanf format line
-  * @param ... variable parameters
-  * 
-  * @return > 0 number of values converted, 0 no value, < 0 EOF.
-  *************************************************/
-int beario_scanf(char *str_format, ...);
-
-/*********************************************//**
-  * @brief emulate putchar
-  * 
-  * @param chr Character to print
-  * 
-  * @return success, return char written, failure EOF.
-  *************************************************/
-int beario_putchar(int chr);
-
-/*********************************************//**
-  * @brief emulate getchar
-  * 
-  * @return character or EOF on failure.
-  *************************************************/
-int beario_getchar();
 
 #ifdef __cplusplus
 }

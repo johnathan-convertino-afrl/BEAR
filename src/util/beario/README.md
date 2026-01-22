@@ -21,7 +21,4 @@ license: MIT
   Functions to add standard functionality of to the BEAR environment.
 
 ## Provides
-  - beario_printf
-  - beario_scanf
-  - beario_putchar
-  - beario_getchar
+  - beario_stronly_printf, reduces size of printf mostly used in zebbs.

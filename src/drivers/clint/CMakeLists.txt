@@ -15,3 +15,7 @@ set(CLINT_DRV_SRCS
 )
 
 add_library(clint_drv ${CLINT_DRV_SRCS})
+
+get_target_property(LIB_INCLUDES clint_drv INCLUDE_DIRECTORIES)
+
+target_include_directories(clint_drv PUBLIC ${LIB_INCLUDES})

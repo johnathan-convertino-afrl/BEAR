@@ -2,9 +2,8 @@
 
 #include <axi_tft.h>
 
-#include <beario/beario.h>
-
 #include <stdint.h>
+#include <stdio.h>
 
 int main()
 {
@@ -22,9 +21,9 @@ int main()
   
   setAxiTftIntrEna(p_axi_tft);
   
-  beario_printf("\n\rSTARTING COLOR PIXEL WRITES\n\r");
+  printf("\n\rSTARTING COLOR PIXEL WRITES\n\r");
   
-  beario_printf("\n\rVIDEO ADDRESS 0x%x\n\r", getAxiTftVmemAddr(p_axi_tft));
+  printf("\n\rVIDEO ADDRESS 0x%lx\n\r", getAxiTftVmemAddr(p_axi_tft));
   
   for(;;)
   {

@@ -22,3 +22,7 @@ if(ALTERA_DRV_SPI)
 endif()
 
 add_library(spi_drv ${SPI_DRV_SRCS})
+
+get_target_property(LIB_INCLUDES spi_drv INCLUDE_DIRECTORIES)
+
+target_include_directories(spi_drv PUBLIC ${LIB_INCLUDES})
