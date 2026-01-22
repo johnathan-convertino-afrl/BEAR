@@ -33,7 +33,7 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 #include <uart.h>
-#include "dev_init.h"
+#include "global_pointers.h"
   
 int _close(int file)
 {

@@ -30,11 +30,11 @@
   * IN THE SOFTWARE.
   *****************************************************************************/
 #include <base.h>
-#include "dev_init.h"
+#include "global_pointers.h"
 
-// static struct s_sdcard_spi __gp_sdcard_spi = NULL;
+struct s_uart *__gp_uart;
 
-void dev_init()
+void __attribute__((constructor)) dev_init(void)
 {
   __gp_uart = (struct s_uart *)UART_ADDR;
   

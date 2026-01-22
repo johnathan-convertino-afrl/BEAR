@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "dev_init.h"
+#include "global_pointers.h"
 
 // Generic C function pointer.
 typedef void(*function_t)(void) ;
