@@ -165,12 +165,19 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
   
   setSpiMode(p_spi, 0, 0);
   
-  setSpiClockFreq(p_spi, SD_SLOW_FREQ_HZ);
-  
   //set struct members
   p_sdcard_spi->state = NOT_READY;
   p_sdcard_spi->p_spi = p_spi;
   p_sdcard_spi->cs_num = cs_num;
+  
+  // clear out read buffer.
+  setSpiChipSelect(p_spi, cs_num);
+  
+  if(getSpiFifoEnabled(p_spi)) setSpiResetRXfifo(p_spi);
+  
+  waitForTrans(p_spi, 100);
+  
+  setSpiClockFreq(p_spi, SD_SLOW_FREQ_HZ);
   
   //Try to send command 0 x times and receive idle response.
   init_attempts = SD_INIT_ATTEMPT;
@@ -190,9 +197,6 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     waitForTrans(p_spi, 100);
     
     if(getSpiFifoEnabled(p_spi)) setSpiResetRXfifo(p_spi);
-    
-    //enable chip select
-    setSpiChipSelect(p_spi, cs_num);
     
     setSpiForceSelect(p_spi);
     
@@ -275,7 +279,7 @@ uint8_t initSdcardSpi(struct s_sdcard_spi *p_sdcard_spi, uint32_t memory_address
     return SD_ERROR_RETURN;
   }
 
-  waitForTrans(p_spi, 10);
+  waitForTrans(p_spi, 100);
   
   //send ACMD41 till we come out of idle
   init_attempts = SD_INIT_ATTEMPT;

@@ -42,6 +42,7 @@
 #include <string.h>
 
 #define NUM_FILE_NAMES 3
+#define NUM_OF_TRIES 5
 
 int zebbs_file_read(uint8_t *p_buf);
 void zebbs_printf(char *info_str);
@@ -50,21 +51,28 @@ int main()
 {
   int index = NUM_FILE_NAMES;
   int error = 0;
+  int tries = NUM_OF_TRIES;
 
   char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "u-boot.bin", "opensbi.bin"};
   
   FATFS file_sys;
   
-  __delay_ms(100);
-  
-  beario_stronly_printf("\n\r");
-  
-  __delay_ms(100);
-  
+  zebbs_printf("\n");
+
   zebbs_printf("Starting");
   
-  error = pf_mount(&file_sys);
+  __delay_ms(1000);
   
+  do
+  {
+    error = pf_mount(&file_sys);
+    
+    if(!error) break;
+    
+    zebbs_printf("Restarting");
+  } 
+  while(--tries);
+    
   if(error)
   {
     zebbs_printf("SDCARD MOUNT FAILED");
