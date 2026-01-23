@@ -89,7 +89,7 @@ SECTIONS
      * execution.
      */
 
-    .init : {
+    .init (READONLY) : {
         /* The _enter symbol is placed in the .text.metal.init.enter section
          * and must be placed at the beginning of the program */
         KEEP (*(.text.metal.init.enter))
@@ -98,17 +98,17 @@ SECTIONS
         KEEP (*(.text.libgloss.start))
     } >rom :rom
 
-    .fini : {
+    .fini (READONLY) : {
         KEEP (*(SORT_NONE(.fini)))
     } >rom :rom
 
-    .preinit_array : ALIGN(8) {
+    .preinit_array (READONLY) : ALIGN(8) {
         PROVIDE_HIDDEN (__preinit_array_start = .);
         KEEP (*(.preinit_array))
         PROVIDE_HIDDEN (__preinit_array_end = .);
     } >rom :rom
 
-    .init_array : ALIGN(8) {
+    .init_array (READONLY) : ALIGN(8) {
         PROVIDE_HIDDEN (__init_array_start = .);
         KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
         KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
@@ -119,7 +119,7 @@ SECTIONS
         PROVIDE_HIDDEN ( metal_constructors_end = .);
     } >rom :rom
 
-    .fini_array : ALIGN(8) {
+    .fini_array (READONLY) : ALIGN(8) {
         PROVIDE_HIDDEN (__fini_array_start = .);
         KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
         KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
@@ -132,7 +132,7 @@ SECTIONS
 
  
 
-    .ctors : {
+    .ctors (READONLY) : {
         KEEP (*crtbegin.o(.ctors))
         KEEP (*crtbegin?.o(.ctors))
         KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
@@ -141,7 +141,7 @@ SECTIONS
         KEEP (*(.metal.ctors .metal.ctors.*))
     } >rom :rom
 
-    .dtors : {
+    .dtors (READONLY) : {
         KEEP (*crtbegin.o(.dtors))
         KEEP (*crtbegin?.o(.dtors))
         KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))

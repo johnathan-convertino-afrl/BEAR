@@ -39,6 +39,7 @@ void _Exit(int exit_code) __attribute__ ((noreturn,noinline));
 
 // Standard entry point, no arguments.
 extern int main(void);
+extern void __attribute__((constructor)) dev_init(void);
 
 // The linker script will place this in the reset entry point.
 // It will be 'called' with no stack or C runtime configuration.
