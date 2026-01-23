@@ -30,6 +30,7 @@
   * IN THE SOFTWARE.
   *****************************************************************************/
 #include <base.h>
+#include <uart.h>
 #include "global_pointers.h"
 
 struct s_uart *__gp_uart;
@@ -37,6 +38,8 @@ struct s_uart *__gp_uart;
 void __attribute__((constructor)) dev_init(void)
 {
   __gp_uart = (struct s_uart *)UART_ADDR;
+  
+  setUartResetTXfifo(__gp_uart);
   
 //   __gp_sdcard_spi = malloc(sizeof(struct s_sdcard_spi));
 //   

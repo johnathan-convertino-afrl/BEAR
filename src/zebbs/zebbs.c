@@ -57,7 +57,7 @@ int main()
   
   FATFS file_sys;
   
-  zebbs_printf("\n");
+  beario_stronly_printf("\n");
 
   zebbs_printf("Starting");
   
