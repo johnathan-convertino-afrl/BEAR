@@ -57,7 +57,7 @@ int main()
   
   FATFS file_sys;
   
-  beario_stronly_printf("\n");
+  beario_stronly_printf("\n\r");
 
   zebbs_printf("Starting");
   
@@ -79,6 +79,8 @@ int main()
     
     return 0;
   }
+  
+  zebbs_printf("SDCARD MOUNT SUCCESS");
   
   do
   {
