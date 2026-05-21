@@ -10,6 +10,8 @@ add_subdirectory(util)
 
 if(BOOTLOADER)
   add_subdirectory(zebbs)
+elseif(DOOM)
+  add_subdirectory(doom)
 else()
   add_subdirectory(apps)
 endif()
