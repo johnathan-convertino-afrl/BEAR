@@ -33,30 +33,63 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 #include <uart.h>
+#include <pff3a/diskio.h>
+#include <stdarg.h>
+#include <unistd.h>
 #include "global_pointers.h"
+
+FATFS g_file_sys;
   
 int _close(int file)
 {
   //can't really close the uart either
-  return -1;
+  if(file != 3) return -1;
+
+  return 0;
 }
 
 int _isatty(int file)
 {
-  //yup... it is
-  return 1;
+  if(file != 3) return 1;
+
+  return 0;
 }
 
 int _lseek(int file, int ptr, int dir)
 {
   //can't seek the uart
-  return 0;
+  if(file != 3) return 0;
+
+  if(dir != SEEK_SET) return -1;
+
+  if(pf_lseek(ptr)) return -1;
+
+  return ptr;
 }
 
 int _open(const char *name, int flags, ...)
 {
-  //for eventual file opening
-  return -1;
+  char str_char;
+  int varargs = 0;
+  int error = 0;
+
+  va_list args;
+
+  va_start(args, flags);
+
+  if(va_arg(args, int) != 0) return -1;
+
+  va_end(args);
+
+  error = pf_mount(&g_file_sys);
+
+  if(error != 0) return -error;
+
+  error = pf_open(name);
+
+  if(error != 0) return -error;
+
+  return 3;
 }
 
 // per bootstrapping-libc-with-newlib
@@ -82,6 +115,14 @@ int _kill(pid_t pid, int sig)
 int _read(int file, char *ptr, int len)
 {
   int index;
+
+  if(file == 3)
+  {
+    if(pf_read(ptr, len, &index)) return -1;
+
+    return index;
+  }
+
   // we do not handle anything other than stdin for now
   if(file != 1) return -1;
   
@@ -98,6 +139,13 @@ int _read(int file, char *ptr, int len)
 int _write(int file, char *ptr, int len)
 {
   int index;
+
+  if(file == 3)
+  {
+    if(pf_write(ptr, len, &index)) return -1;
+
+    return index;
+  }
   // we do not handle anything other than stdout or error for now
   if(file > 2 || !file) return -1;
   

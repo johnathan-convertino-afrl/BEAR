@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.14)
 
 include_directories(
   .
+  ${CMAKE_SOURCE_DIR}/src/util/
 )
 
 if(BUILD_BOOT_LOADER)
@@ -18,4 +19,4 @@ endif()
 list(APPEND BARE_METAL_STARTUP syscalls.c dev_init.c)
 
 add_library(bare_metal_startup OBJECT ${BARE_METAL_STARTUP})
-target_link_libraries(bare_metal_startup PUBLIC uart_drv)
+target_link_libraries(bare_metal_startup PRIVATE fatfs_util uart_drv)
