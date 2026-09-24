@@ -12,7 +12,7 @@ ENTRY(_enter)
 MEMORY
 {
     itim (airwx) : ORIGIN = 0x00800000, LENGTH = 1k
-    ram (arw!xi) : ORIGIN = 0x80080000, LENGTH = 16M
+    ram (arw!xi) : ORIGIN = 0x80080000, LENGTH = 64M
     rom (irx!wa) : ORIGIN = 0x80000000, LENGTH = 512k
 }
 
