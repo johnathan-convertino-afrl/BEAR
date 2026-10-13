@@ -32,7 +32,8 @@ license: MIT
   4. make
 
 ### Cmake options
-  All applications are build OR the zero stage bootloader is built. The -DBOOTLOADER option will only build the zerostage bootloader (ZEBBS). Without it all apps will build WITHOUT the bootloader.
+  All applications are build OR the zero stage bootloader is built. The -DBOOTLOADER option will only build the zerostage bootloader (ZEBBS). The -DDOOM option will only build DOOM. Without either all apps will build WITHOUT the bootloader and doom.
   
   - cmake ../  -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
   - cmake ../  -DBOOTLOADER=ON -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
+  - cmake ../  -DDOOM=ON -DCMAKE_TOOLCHAIN_FILE=../arch/riscv/veronica/riscv.cmake
