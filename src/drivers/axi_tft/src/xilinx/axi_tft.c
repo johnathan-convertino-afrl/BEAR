@@ -33,6 +33,7 @@
 
 #include "axi_tft.h"
 #include <string.h>
+#include <stdlib.h>
 
 // Write data to vram space
 void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, void *p_buffer, uint32_t len, uint32_t const_data);
@@ -183,12 +184,22 @@ void writeAxiTftVRAM(struct s_axi_tft *p_axi_tft, uint32_t start, void *p_buffer
     {
       //increment buffer with current x
       *(p_vram+x_cor) = (p_temp ? *(p_temp+offset) : const_data);
-      
+
       if(++offset >= len) return;
     }
+    // if(p_temp == NULL)
+    // {
+    //   memset(p_vram, const_data, XRES);
+    // }
+    // else
+    // {
+    //   memcpy(p_vram, p_temp, XRES);
+    //
+    //   p_temp = p_temp+XRES;
+    // }
     
     //update pointer to new x plus offset unused virtual pixes.
-    p_vram = p_vram+(XRES_VIR-XRES)+x_cor;
+    p_vram = p_vram+XRES_VIR;
   
     // reset x here since x_cor is set to start
     x_cor = 0;

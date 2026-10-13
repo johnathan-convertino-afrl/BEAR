@@ -41,7 +41,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#define NUM_FILE_NAMES 3
+#define NUM_FILE_NAMES 4
 #define NUM_OF_TRIES 5
 
 int zebbs_file_read(uint8_t *p_buf);
@@ -53,7 +53,7 @@ int main()
   int error = 0;
   int tries = NUM_OF_TRIES;
 
-  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "u-boot.bin", "opensbi.bin"};
+  char *p_file_names[NUM_FILE_NAMES] = {"app.bin", "DOOM.bin", "u-boot.bin", "opensbi.bin"};
   
   FATFS file_sys;
   
@@ -105,7 +105,7 @@ int main()
     error = zebbs_file_read((uint8_t *)DDR_ADDR);
     
     //if we are not the last file and there is no error, load uboot
-    if((index > 0) && !error)
+    if((index > 1) && !error)
     {
       error = pf_open(p_file_names[--index]);
       

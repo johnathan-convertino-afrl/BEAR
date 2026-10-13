@@ -33,7 +33,6 @@
 #include <sys/stat.h> 
 #include <sys/types.h>
 #include <uart.h>
-#include <pff3a/diskio.h>
 #include <stdarg.h>
 #include <unistd.h>
 #include <errno.h>
@@ -42,110 +41,29 @@
 #include <base.h>
 
 #include "global_pointers.h"
-
-#define NUM_OF_TRIES 10
-
-FATFS *p_file_sys = NULL;
-
-volatile int g_file_offset;
   
 int _close(int file)
 {
   //can't really close the uart either
-  if(file != 3) return -1;
-
-  printf("TRIED TO CLOSE FILE\n");
-
-  free(p_file_sys);
-
-  p_file_sys = NULL;
 
   return 0;
 }
 
 int _isatty(int file)
 {
-  if(file != 3) return 1;
-
-  return 0;
+  return 1;
 }
 
 int _lseek(int file, int ptr, int dir)
 {
   //can't seek the uart
-  if(file != 3) return -1;
-
-  //SEEK_SET is 0 "START TO OFFSET"
-  //SEEK_CUR is 1 "CURRENT PLUS OFFSET PTR"
-  //SEEK_END is 2 "END AND OFFSET?"
-  printf("SEEK CAUGHT %d %d SEEK: %d %d %d\n", ptr, dir, SEEK_SET, SEEK_CUR, SEEK_END);
-
-  switch(dir)
-  {
-    case SEEK_SET:
-      pf_lseek(ptr);
-      return ptr;
-    case SEEK_CUR:
-      g_file_offset += ptr;
-      pf_lseek(g_file_offset);
-      return g_file_offset;
-    case SEEK_END:
-      return p_file_sys->fsize - ptr;
-  }
+  return -1;
 
 }
 
 int _open(const char *name, int flags, ...)
 {
-  char str_char;
-  int varargs = 0;
-  int error = 0;
-
-  va_list args;
-
-  va_start(args, flags);
-
-  // if(va_arg(args, int) != 0) return -1;
-
-  va_end(args);
-
-  __delay_ms(1000);
-
-  if(!p_file_sys)
-  {
-    int tries = NUM_OF_TRIES;
-
-    p_file_sys = malloc(sizeof(FATFS));
-
-    if(!p_file_sys) return -1;
-
-    do
-    {
-      error = pf_mount(p_file_sys);
-
-      if(!error) break;
-    }
-    while(--tries);
-  }
-
-  if(error)
-  {
-    printf("MOUNT FAILED, %d\n\r", error);
-
-    return -error;
-  }
-
-  printf("TRIED TO OPEN FILE\n");
-
-  error = pf_open(name);
-
-  if(error != 0) return -error;
-
-  g_file_offset = 0;
-
-  printf("OPENED FILE\n");
-
-  return 3;
+  return 0;
 }
 
 // per bootstrapping-libc-with-newlib
@@ -170,20 +88,8 @@ int _kill(pid_t pid, int sig)
 // read call for printf functionality.
 int _read(int file, char *ptr, int len)
 {
-  int index;
+  int index = 0;
 
-  if(file == 3)
-  {
-    if(pf_read(ptr, len, &index)) return -1;
-
-    printf("READ %d %d\n", len, index);
-
-    g_file_offset += index;
-
-    return index;
-  }
-
-  // we do not handle anything other than stdin for now
   if(file != 1) return -1;
   
   for(index = 0; index < len; index++)
@@ -198,17 +104,8 @@ int _read(int file, char *ptr, int len)
 
 int _write(int file, char *ptr, int len)
 {
-  int index;
+  int index = 0;
 
-  if(file == 3)
-  {
-    if(pf_write(ptr, len, &index)) return -1;
-
-    g_file_offset += index;
-
-    return index;
-  }
-  // we do not handle anything other than stdout or error for now
   if(file > 2 || !file) return -1;
 
   for(index = 0; index < len; index++)

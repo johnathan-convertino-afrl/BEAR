@@ -58,7 +58,7 @@ SECTIONS
      * Note that depending on the memory layout, the bitness (32/64bit) of the
      * target, and the code model in use, this might cause a relocation error.
      */
-    __heap_size = DEFINED(__heap_size) ? __heap_size : 0x800000;
+    __heap_size = DEFINED(__heap_size) ? __heap_size : 0x1000000;
 
     /* The boot hart sets which hart runs the pre-main initialization routines,
      * including copying .data into RAM, zeroing the BSS region, running

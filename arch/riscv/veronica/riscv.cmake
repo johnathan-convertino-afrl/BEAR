@@ -93,8 +93,13 @@ set( CMAKE_OBJDUMP      ${RISCV_TOOLCHAIN_BIN_PATH}/${CROSS_COMPILE}objdump
 # Set the CMAKE C flags (which should also be used by the assembler!
 if(BOOTLOADER)
   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -g -fdata-sections -ffunction-sections -fstrict-volatile-bitfields -fno-strict-aliasing" )
+  add_compile_definitions("PF_USE_WRITE=0")
+elseif(DOOM)
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Ofast -fdata-sections -ffunction-sections -fstrict-volatile-bitfields -fno-strict-aliasing -mstrict-align" )
+  add_compile_definitions("PF_USE_WRITE=1")
 else()
-  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os -g -fdata-sections -ffunction-sections -fstrict-volatile-bitfields -fno-strict-aliasing" )
+  set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O -g -fdata-sections -ffunction-sections -fstrict-volatile-bitfields -fno-strict-aliasing" )
+  add_compile_definitions("PF_USE_WRITE=1")
 endif()
 
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}" )
