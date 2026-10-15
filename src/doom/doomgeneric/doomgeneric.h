@@ -25,7 +25,7 @@ typedef uint32_t pixel_t;
 #endif  // CMAP256
 
 
-extern pixel_t* DG_ScreenBuffer;
+// extern pixel_t* DG_ScreenBuffer;
 extern uint8_t  DG_ScreenBuffer_Valid;
 
 

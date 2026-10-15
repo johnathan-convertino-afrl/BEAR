@@ -6,7 +6,6 @@
 
 #include <base.h>
 #include <riscv-csr.h>
-#include <axi_tft.h>
 #include <gpio.h>
 #include <plic.h>
 #include <clint.h>
@@ -26,7 +25,7 @@ struct s_clint  *gp_clint = NULL;
 
 // Global to hold current timestamp, written in MTI handler.
 static volatile uint64_t timestamp = 0;
-static volatile uint64_t milliseconds = 0;
+volatile uint64_t milliseconds = 0;
 
 #define KEYQUEUE_SIZE 16
 
@@ -83,40 +82,12 @@ static void handleKeyInput(uint32_t keypress)
   prev_keypress = keypress;
 }
 
-void writeVRAM(struct s_axi_tft *p_axi_tft, void *p_buffer)
-{
-  uint16_t x_cor = 0;
-  uint16_t y_cor = DOOMGENERIC_RESY;
-  struct color c;
-
-  //Get start address
-  uint32_t *p_vram = (uint32_t *)p_axi_tft->addr;
-  uint8_t *p_temp = (uint8_t *)p_buffer;
-
-  while(y_cor--)
-  {
-    for(x_cor = 0; x_cor < DOOMGENERIC_RESX; x_cor++)
-    {
-      c = colors[p_temp[x_cor]];
-      
-      p_vram[x_cor] = (c.r << 16) |
-                      (c.g <<  8) |
-                      (c.b <<  0);
-    }
-
-    p_temp += DOOMGENERIC_RESX;
-    
-    //update pointer to new x plus offset unused virtual pixes.
-    p_vram += XRES_VIR;
-  }
-}
-
 void DG_Init()
 {
   gp_axi_tft = initAxiTft(TFT_ADDR);
 
   writeAxiTftVRAMconst(gp_axi_tft, 0, 0, 640*480);
-
+  
   gp_gpio = initGpio(GPIO_ADDR);
 
   gp_gpio->tri1 = 0x000000FF;
@@ -129,12 +100,12 @@ void DG_Init()
   setClintMTimeCmpOffset(gp_clint, calcMtimecmpMilliseconds(BUS_FREQ_HZ, 1));
   
   gp_plic  = initPlic(PLIC_ADDR);
-
+  
   // setup plic to enable interrupt 2, axi tft.
   gp_plic->priority2 = 7;
-
+  
   gp_plic->threshold = 0;
-
+  
   gp_plic->enable1.bits.i2 = 1;
   
   setAxiTftIntrEna(gp_axi_tft);
@@ -144,7 +115,7 @@ void DG_SleepMs(uint32_t ms)
 {
   uint64_t prev_milliseconds = milliseconds;
 
-  while((milliseconds-prev_milliseconds) > ms)
+  while((milliseconds-prev_milliseconds) < ms)
   {
     __asm__ volatile ("wfi");
   }
@@ -206,14 +177,14 @@ void riscv_mtvec_mei(void)
 
   claim_num = gp_plic->claim;
 
-  if(gp_axi_tft->iesr.bits.ie && gp_axi_tft->iesr.bits.status && DG_ScreenBuffer_Valid)
-  {
-    writeVRAM(gp_axi_tft, DG_ScreenBuffer);
+  // if(gp_axi_tft->iesr.bits.ie && gp_axi_tft->iesr.bits.status && DG_ScreenBuffer_Valid)
+  // {
+  //   writeVRAM(gp_axi_tft, I_VideoBuffer);
     
-    DG_ScreenBuffer_Valid = 0;
+  handleKeyInput(gp_gpio->data1 & 0x000000FF);
     
-    handleKeyInput(gp_gpio->data1 & 0x000000FF);
-  }
+  //   DG_ScreenBuffer_Valid = 0;
+  // }
 
   gp_plic->claim = claim_num;
 }

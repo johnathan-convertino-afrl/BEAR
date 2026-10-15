@@ -4,7 +4,7 @@
 #include "z_zone.h"
 #include "doomgeneric.h"
 
-pixel_t* DG_ScreenBuffer = NULL;
+// pixel_t* DG_ScreenBuffer = NULL;
 uint8_t  DG_ScreenBuffer_Valid = 0;
 
 void M_FindResponseFile(void);

@@ -20,6 +20,7 @@
 #ifndef __I_VIDEO__
 #define __I_VIDEO__
 
+#include <axi_tft.h>
 #include "doomtype.h"
 
 // Screen width and height.
@@ -156,6 +157,8 @@ extern boolean screensaver_mode;
 extern int usegamma;
 extern byte *I_VideoBuffer;
 
+extern volatile uint64_t milliseconds;
+
 extern int screen_width;
 extern int screen_height;
 extern int screen_bpp;
@@ -164,6 +167,8 @@ extern int aspect_ratio_correct;
 
 extern int show_diskicon;
 extern int diskicon_readbytes;
+
+extern struct s_axi_tft *gp_axi_tft;
 
 #ifdef CMAP256
 

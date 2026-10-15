@@ -61,7 +61,7 @@ void riscv_mtvec_mti(void)
   // Timer exception, re-program the timer for a one second tick.
   timestamp = getClintMTime(gp_clint);
 
-  setClintMTimeCmpOffset(gp_clint, calcMtimecmpSeconds(CPU_FREQ_HZ, 1));
+  setClintMTimeCmpOffset(gp_clint, calcMtimecmpSeconds(BUS_FREQ_HZ, 1));
 
   printf("\n\rLED EXAMPLE TIMER IRQ\n\r");
 }

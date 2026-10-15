@@ -41,7 +41,7 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
 #include <stdbool.h>
 #include <stdlib.h>
-
+#include <base.h>
 #include <fcntl.h>
 
 #include <stdarg.h>
@@ -76,7 +76,6 @@ static struct FB_ScreenInfo s_Fb;
 int fb_scaling = 1;
 int usemouse = 0;
 
-
 #ifdef CMAP256
 
 boolean palette_changed;
@@ -89,6 +88,33 @@ static struct color colors[256];
 
 #endif  // CMAP256
 
+void writeVRAM(struct s_axi_tft *p_axi_tft, void *p_buffer)
+{
+  uint16_t x_cor = 0;
+  uint16_t y_cor = DOOMGENERIC_RESY;
+  struct color c;
+
+  //Get start address
+  uint32_t *p_vram = (uint32_t *)p_axi_tft->addr;
+  uint8_t *p_temp = (uint8_t *)p_buffer;
+
+  while(y_cor--)
+  {
+    for(x_cor = 0; x_cor < DOOMGENERIC_RESX; x_cor++)
+    {
+      c = colors[p_temp[x_cor]];
+      
+      p_vram[x_cor] = (c.r << 16) |
+                      (c.g <<  8) |
+                      (c.b <<  0);
+    }
+
+    p_temp += DOOMGENERIC_RESX;
+    
+    //update pointer to new x plus offset unused virtual pixes.
+    p_vram += XRES_VIR;
+  }
+}
 
 void I_GetEvent(void);
 
@@ -286,10 +312,10 @@ void I_InitGraphics (void)
     }
 
 
-    /* Allocate screen to draw to */
-  I_VideoBuffer = (byte *)Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);  // For DOOM to draw on
-  DG_ScreenBuffer = (byte *)Z_Malloc(DOOMGENERIC_RESX * DOOMGENERIC_RESY, PU_STATIC, NULL);
-  screenvisible = true;
+      /* Allocate screen to draw to */
+    I_VideoBuffer = (byte *)Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);  // For DOOM to draw on
+    // DG_ScreenBuffer = (byte *)Z_Malloc(DOOMGENERIC_RESX * DOOMGENERIC_RESY, PU_STATIC, NULL);
+    screenvisible = true;
 
     extern void I_InitInput(void);
     I_InitInput();
@@ -320,11 +346,11 @@ void I_UpdateNoBlit (void)
 
 void I_FinishUpdate (void)
 {
-  int y;
-  int x_offset, y_offset, x_offset_end;
-  unsigned char *line_in, *line_out;
+  // int y;
+  // int x_offset, y_offset, x_offset_end;
+  // unsigned char *line_in, *line_out;
   
-  if(DG_ScreenBuffer_Valid) return;
+  // DG_ScreenBuffer_Valid = 1;
 
   /* Offsets in case FB is bigger than DOOM */
   /* 600 = s_Fb heigt, 200 screenheight */
@@ -336,22 +362,35 @@ void I_FinishUpdate (void)
   // x_offset_end = ((s_Fb.xres - (SCREENWIDTH  * fb_scaling)) * s_Fb.bits_per_pixel/8) - x_offset;
 
   /* DRAW SCREEN */
-  line_in  = (unsigned char *) I_VideoBuffer;
-  line_out = (unsigned char *) DG_ScreenBuffer;
+  // line_in  = (unsigned char *) I_VideoBuffer;
+  // line_out = (unsigned char *) DG_ScreenBuffer;
 
-  y = SCREENHEIGHT;
+  // y = SCREENHEIGHT;
   
-  while (y--)
+  // if(gp_axi_tft->iesr.bits.ie && gp_axi_tft->iesr.bits.status)
+  // {
+  //     writeVRAM(gp_axi_tft, I_VideoBuffer);
+  // }
+  
+  // DG_ScreenBuffer_Valid++;
+  
+  if(gp_axi_tft->iesr.bits.status)
   {
-    memcpy(line_out, line_in, SCREENWIDTH); /* fb_width is bigger than Doom SCREENWIDTH... */
-    line_out += SCREENWIDTH;
-    line_in += SCREENWIDTH;
+    writeVRAM(gp_axi_tft, I_VideoBuffer);
+    gp_axi_tft->iesr.bits.status = 0;
   }
+  
+  // while (y--)
+  // {
+  //   memcpy(line_out, line_in, SCREENWIDTH); /* fb_width is bigger than Doom SCREENWIDTH... */
+  //   line_out += SCREENWIDTH;
+  //   line_in += SCREENWIDTH;
+  // }
   
   // DG_ScreenBuffer = line_in;
   // I_VideoBuffer = line_out;
     
-  DG_ScreenBuffer_Valid = 1;
+  // DG_ScreenBuffer_Valid = 0;
 }
 
 //
